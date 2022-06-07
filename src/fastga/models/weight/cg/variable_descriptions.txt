@@ -3,29 +3,51 @@
 # my:variable||The description of my:variable, as long as needed, but on one line.
 # The separator "||" can be surrounded with spaces (that will be ignored)
 
+# For the computation of the center of gravity coordinates of the different components certain axes need to be selected:
+# X-axis: body axis that goes positive from the nose to the tail of the airplane
+# Y-axis: perpendicular to the plane of symmetry of the airplane, positive towards the tip of the right wing.
+# z-axis: contained in the plane of symmetry of the aircraft and perpendicular to the x-axis, positive upwards.
+
 data:weight:aircraft:CG:aft:MAC_position || most aft X-position of center of gravity as ratio of mean aerodynamic chord
 data:weight:aircraft:CG:fwd:MAC_position || most fwd X-position of center of gravity as ratio of mean aerodynamic chord
 data:weight:aircraft:CG:ground_condition:max:MAC_position || most aft X-position of center of gravity as ratio of mean aerodynamic chord for ground conditions
 data:weight:aircraft:CG:ground_condition:min:MAC_position || most fwd X-position of center of gravity as ratio of mean aerodynamic chord for ground conditions
 data:weight:aircraft:empty:CG:MAC_position || X-position of center of gravity as ratio of mean aerodynamic chord for empty aircraft
+
 data:weight:aircraft_empty:CG:x || X-position center of gravity of empty aircraft
 data:weight:aircraft_empty:CG:z || Z-position center of gravity of empty aircraft
 data:weight:aircraft_empty:mass || mass of empty aircraft
+
 data:weight:airframe:flight_controls:CG:x || X-position of center of gravity of the flight controls
 data:weight:airframe:fuselage:CG:x || X-position of center of gravity of the fuselage
+data:weight:airframe:fuselage:CG:y || Y-position of center of gravity of the fuselage
+data:weight:airframe:fuselage:CG:z || Z-position of center of gravity of the fuselage
 data:weight:airframe:horizontal_tail:CG:x || X-position of center of gravity of the horizontal tail
+data:weight:airframe:horizontal_tail:CG:y || Y-position of center of gravity of the horizontal tail (considered zero, same as the wing)
+data:weight:airframe:horizontal_tail:CG:z || Z-position of center of gravity of the horizontal tail w.r.t. to fuselage centerline (positive if over the fuselage centerline)
+data:weight:airframe:half_horizontal_tail:CG:y || Y-position of center of gravity for half of the horizontal tail
 data:weight:airframe:landing_gear:front:CG:x || X-position of center of gravity of the front landing gear
 data:weight:airframe:landing_gear:main:CG:x || X-position of center of gravity of the main landing gear
 data:weight:airframe:vertical_tail:CG:x || X-position of center of gravity of the vertical tail
+data:weight:airframe:vertical_tail:CG:y || Y-position of center of gravity of the vertical tail (considered zero)
+data:weight:airframe:vertical_tail:CG:z || Z-position of center of gravity of the vertical tail w.r.t the top part of the fuselage at the vertical tail position
 data:weight:airframe:wing:CG:x || X-position of center of gravity of the wing
+data:weight:airframe:wing:CG:z || Z-position of center of gravity of the wing w.r.t to fuselage centerline (positive if cg below the fuselage centerline)
+data:weight:airframe:wing:CG:y || Y-position of center of gravity of the wing (considered zero)
+data:weight:airframe:half_wing:CG:y || Y-position of center of gravity of half wing
+
 data:weight:furniture:passenger_seats:CG:x || X-position of center of gravity of the passenger/pilot seats
+
 data:weight:payload:front_fret:CG:x || X-position of center of gravity of the front fret
 data:weight:payload:PAX:CG:x || X-position of center of gravity of the passengers/pilots
 data:weight:payload:rear_fret:CG:x || X-position of center of gravity of the rear fret
+
+data:weight:propulsion:CG:x ||
 data:weight:propulsion:engine:CG:x || X-position of center of gravity of the engine(s)
 data:weight:propulsion:engine:CG:z || Z-position of center of gravity of the engine(s)
 data:weight:propulsion:fuel_lines:CG:x || X-position of center of gravity of the fuel lines
 data:weight:propulsion:tank:CG:x || X-position of center of gravity of the tank
+
 data:weight:systems:life_support:air_conditioning:CG:x || X-position of center of gravity of the air conditioning
 data:weight:systems:navigation:CG:x || X-position of center of gravity of the navigation system
 data:weight:systems:power:electric_systems:CG:x || X-position of center of gravity of the electric power unit
