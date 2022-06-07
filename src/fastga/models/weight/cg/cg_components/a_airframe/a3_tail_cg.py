@@ -48,6 +48,7 @@ class ComputeHTcg(om.ExplicitComponent):
             "data:geometry:horizontal_tail:MAC:at25percent:x:from_wingMAC25", val=np.nan, units="m"
         )
         self.add_input("data:geometry:horizontal_tail:span", val=np.nan, units="m")
+        self.add_input("data:geometry:horizontal_tail:z:from_wingMAC25", val=np.nan, units="m")
         self.add_input("data:geometry:wing:MAC:at25percent:x", val=np.nan, units="m")
         self.add_input("data:geometry:horizontal_tail:sweep_25", val=np.nan, units="deg")
         self.add_input("data:geometry:horizontal_tail:MAC:length", val=np.nan, units="m")
@@ -56,6 +57,9 @@ class ComputeHTcg(om.ExplicitComponent):
         )
 
         self.add_output("data:weight:airframe:horizontal_tail:CG:x", units="m")
+        self.add_output("data:weight:airframe:horizontal_tail:CG:y", units="m")
+        self.add_output("data:weight:airframe:horizontal_tail:CG:z", units="m")
+        self.add_output("data:weight:airframe:half_horizontal_tail:CG:y", units="m")
 
         self.declare_partials("*", "*", method="fd")
 
@@ -74,7 +78,17 @@ class ComputeHTcg(om.ExplicitComponent):
         x_cg_ht = 0.38 * b_h * math.tan(sweep_25_ht / 180.0 * math.pi) + 0.42 * l_cg
         x_cg_31 = lp_ht + fa_length - 0.25 * mac_ht + (x_cg_ht - x0_ht)
 
+        # Y-position of the cg of the semi horizontal tail
+        y_cg = 0.38 * b_h / 2.0
+
+        # Z-position of the cg of the horizontal tail
+        z_cg = inputs["data:geometry:horizontal_tail:z:from_wingMAC25"]
+
         outputs["data:weight:airframe:horizontal_tail:CG:x"] = x_cg_31
+        outputs["data:weight:airframe:half_horizontal_tail:CG:y"] = y_cg
+        outputs["data:weight:airframe:horizontal_tail:CG:y"] = 0.0
+        outputs["data:weight:airframe:horizontal_tail:CG:z"] = z_cg
+
 
 
 class ComputeVTcg(om.ExplicitComponent):
@@ -95,6 +109,7 @@ class ComputeVTcg(om.ExplicitComponent):
         self.add_input("data:geometry:has_T_tail", val=np.nan)
 
         self.add_output("data:weight:airframe:vertical_tail:CG:x", units="m")
+        self.add_output("data:weight:airframe:vertical_tail:CG:z", units="m")
 
         self.declare_partials("*", "*", method="fd")
 
@@ -112,11 +127,16 @@ class ComputeVTcg(om.ExplicitComponent):
         if has_t_tail:
             l_cg_vt = (1.0 - 0.55) * (root_chord - tip_chord) + tip_chord
             x_cg_vt = 0.55 * b_v * math.tan(sweep_25_vt / 180.0 * math.pi) + 0.42 * l_cg_vt
+            z_cg = 0.55 * b_v
 
         else:
             l_cg_vt = (1.0 - 0.38) * (root_chord - tip_chord) + tip_chord
             x_cg_vt = 0.38 * b_v * math.tan(sweep_25_vt / 180.0 * math.pi) + 0.42 * l_cg_vt
+            z_cg = 0.38 * b_v
 
         x_cg_32 = lp_vt + fa_length - 0.25 * mac_vt + (x_cg_vt - x0_vt)
 
         outputs["data:weight:airframe:vertical_tail:CG:x"] = x_cg_32
+        outputs["data:weight:airframe:vertical_tail:CG:y"] = 0.0
+        outputs["data:weight:airframe:vertical_tail:CG:z"] = z_cg
+

@@ -36,6 +36,8 @@ class ComputeWingCG(ExplicitComponent):
         self.add_input("data:geometry:wing:MAC:leading_edge:x:local", val=np.nan, units="m")
         self.add_input("data:geometry:wing:MAC:length", val=np.nan, units="m")
         self.add_input("data:geometry:wing:sweep_25", val=np.nan, units="deg")
+        self.add_input("data:geometry:wing:dihedral", val=np.nan, units="rad")
+        self.add_input("data:geometry:wing:vertical_position", val=np.nan, units="m")
         self.add_input("data:geometry:wing:span", val=np.nan, units="m")
         self.add_input("data:geometry:flap:chord_ratio", val=0.2)
         self.add_input("data:geometry:wing:root:virtual_chord", val=np.nan, units="m")
@@ -44,6 +46,9 @@ class ComputeWingCG(ExplicitComponent):
         self.add_input("data:geometry:wing:tip:y", val=np.nan, units="m")
 
         self.add_output("data:weight:airframe:wing:CG:x", units="m")
+        self.add_output("data:weight:airframe:wing:CG:y", units="m")
+        self.add_output("data:weight:airframe:wing:CG:z", units="m")
+        self.add_output("data:weight:airframe:half-wing:CG:y", units="m")
 
         self.declare_partials("*", "*", method="fd")
 
@@ -58,9 +63,12 @@ class ComputeWingCG(ExplicitComponent):
         y2_wing = inputs["data:geometry:wing:root:y"]
         l4_wing = inputs["data:geometry:wing:tip:chord"]
         y4_wing = inputs["data:geometry:wing:tip:y"]
+        dihedral = inputs["data:geometry:wing:dihedral"]
+        vertical_position = inputs["data:geometry:wing:vertical_position"]
 
         if sweep_25 < 5.0:
             y_cg = 0.40 * span / 2.0
+            z_cg = - vertical_position + y_cg * math.tan(dihedral)   # vertical_position is considered positive if below the fuselage centerline (check variable_descriptions.txt)
 
             if y_cg < y2_wing:
                 chord_reduction = 0.0
@@ -73,6 +81,7 @@ class ComputeWingCG(ExplicitComponent):
 
         else:
             y_cg = 0.35 * span / 2.0
+            z_cg = - vertical_position + y_cg * math.tan(dihedral)
 
             if y_cg < y2_wing:
                 chord_reduction = 0.0
@@ -95,3 +104,6 @@ class ComputeWingCG(ExplicitComponent):
         x_cg_a1 = fa_length - 0.25 * l0_wing - x0_wing + x_cg_wing_rel
 
         outputs["data:weight:airframe:wing:CG:x"] = x_cg_a1
+        outputs["data:weight:airframe:half-wing:CG:y"] = y_cg
+        outputs["data:weight:airframe:wing:CG:y"] = 0.0
+        outputs["data:weight:airframe:wing:CG:z"] = z_cg

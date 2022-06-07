@@ -36,10 +36,15 @@ class ComputeLandingGearCG(ExplicitComponent):
         self.add_input("data:geometry:wing:MAC:length", val=np.nan, units="m")
         self.add_input("data:geometry:wing:MAC:at25percent:x", val=np.nan, units="m")
         self.add_input("data:weight:aircraft:CG:aft:MAC_position", val=np.nan)
+        self.add_input("data:geometry:landing_gear:height", val=np.nan, units="m")
         self.add_input("settings:weight:airframe:landing_gear:front:weight_ratio", val=0.3)
 
         self.add_output("data:weight:airframe:landing_gear:front:CG:x", units="m")
+        self.add_output("data:weight:airframe:landing_gear:front:CG:y", units="m")
+        self.add_output("data:weight:airframe:landing_gear:front:CG:z", units="m")
         self.add_output("data:weight:airframe:landing_gear:main:CG:x", units="m")
+        self.add_output("data:weight:airframe:landing_gear:main:CG:y", units="m")
+        self.add_output("data:weight:airframe:landing_gear:main:CG:z", units="m")
 
         self.declare_partials("*", "*", method="fd")
 
@@ -50,7 +55,7 @@ class ComputeLandingGearCG(ExplicitComponent):
         fa_length = inputs["data:geometry:wing:MAC:at25percent:x"]
         cg_ratio = inputs["data:weight:aircraft:CG:aft:MAC_position"]
         front_lg_weight_ratio = inputs["settings:weight:airframe:landing_gear:front:weight_ratio"]
-
+        lg_height = inputs["data:geometry:landing_gear:height"]
         # NLG gravity center
         x_cg_a52 = lav * 0.75
         # Aft most CG position
@@ -58,4 +63,8 @@ class ComputeLandingGearCG(ExplicitComponent):
         x_cg_a51 = (x_cg_aft - front_lg_weight_ratio * x_cg_a52) / (1 - front_lg_weight_ratio)
 
         outputs["data:weight:airframe:landing_gear:main:CG:x"] = x_cg_a51
+        outputs["data:weight:airframe:landing_gear:main:CG:y"] = 0.0
+        outputs["data:weight:airframe:landing_gear:main:CG:z"] = lg_height / 2.0
         outputs["data:weight:airframe:landing_gear:front:CG:x"] = x_cg_a52
+        outputs["data:weight:airframe:landing_gear:front:CG:y"] = 0.0
+        outputs["data:weight:airframe:landing_gear:front:CG:z"] = lg_height / 2.0

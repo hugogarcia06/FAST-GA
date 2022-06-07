@@ -1,0 +1,98 @@
+# Documentation of variables used in FAST-GA models
+# Each line should be like:
+# my:variable||The description of my:variable, as long as needed, but on one line.
+# The separator "||" can be surrounded with spaces (that will be ignored)
+
+data:weight:airframe:fuselage:inertia:Iox ||
+data:weight:airframe:fuselage:inertia:Ioy ||
+data:weight:airframe:fuselage:inertia:Ioz ||
+data:weight:airframe:fuselage:inertia:Ix ||
+data:weight:airframe:fuselage:inertia:Iy ||
+data:weight:airframe:fuselage:inertia:Iz ||
+data:weight:airframe:fuselage:inertia:Ixz ||
+data:weight:airframe:fuselage:inertia:Wx ||
+data:weight:airframe:fuselage:inertia:Wy ||
+data:weight:airframe:fuselage:inertia:Wz ||
+
+data:weight:airframe:horizontal_tail:inertia:Iox ||
+data:weight:airframe:horizontal_tail:inertia:Ioy ||
+data:weight:airframe:horizontal_tail:inertia:Ioz ||
+data:weight:airframe:horizontal_tail:inertia:Ix ||
+data:weight:airframe:horizontal_tail:inertia:Iy ||
+data:weight:airframe:horizontal_tail:inertia:Iz ||
+data:weight:airframe:horizontal_tail:inertia:Ixz ||
+data:weight:airframe:horizontal_tail:inertia:Wx ||
+data:weight:airframe:horizontal_tail:inertia:Wy ||
+data:weight:airframe:horizontal_tail:inertia:Wz ||
+
+data:weight:airframe:landing_gear:front:inertia:Ix ||
+data:weight:airframe:landing_gear:front:inertia:Iy ||
+data:weight:airframe:landing_gear:front:inertia:Iz ||
+data:weight:airframe:landing_gear:front:inertia:Ixz ||
+data:weight:airframe:landing_gear:front:inertia:Wx ||
+data:weight:airframe:landing_gear:front:inertia:Wy ||
+data:weight:airframe:landing_gear:front:inertia:Wz ||
+
+data:weight:airframe:landing_gear:main:inertia:Ix ||
+data:weight:airframe:landing_gear:main:inertia:Iy ||
+data:weight:airframe:landing_gear:main:inertia:Iz ||
+data:weight:airframe:landing_gear:main:inertia:Ixz ||
+data:weight:airframe:landing_gear:main:inertia:Wx ||
+data:weight:airframe:landing_gear:main:inertia:Wy ||
+data:weight:airframe:landing_gear:main:inertia:Wz ||
+
+data:weight:airframe:vertical_tail:inertia:Iox ||
+data:weight:airframe:vertical_tail:inertia:Ioy ||
+data:weight:airframe:vertical_tail:inertia:Ioz ||
+data:weight:airframe:vertical_tail:inertia:Ix ||
+data:weight:airframe:vertical_tail:inertia:Iy ||
+data:weight:airframe:vertical_tail:inertia:Iz ||
+data:weight:airframe:vertical_tail:inertia:Ixz ||
+data:weight:airframe:vertical_tail:inertia:Wx ||
+data:weight:airframe:vertical_tail:inertia:Wy ||
+data:weight:airframe:vertical_tail:inertia:Wz ||
+
+data:weight:airframe:wing:inertia:Iox ||
+data:weight:airframe:wing:inertia:Ioy ||
+data:weight:airframe:wing:inertia:Ioz ||
+data:weight:airframe:wing:inertia:Ix ||
+data:weight:airframe:wing:inertia:Iy ||
+data:weight:airframe:wing:inertia:Iz ||
+data:weight:airframe:wing:inertia:Ixz ||
+data:weight:airframe:wing:inertia:Wx ||
+data:weight:airframe:wing:inertia:Wy ||
+data:weight:airframe:wing:inertia:Wz ||
+
+data:weight:aircraft:inertia:Iox ||
+data:weight:aircraft:inertia:Ioy ||
+data:weight:aircraft:inertia:Ioz ||
+data:weight:aircraft:inertia:Ioxz ||
+
+data:weight:aircraft:inertia:Ix ||
+data:weight:aircraft:inertia:Iy ||
+data:weight:aircraft:inertia:Iz ||
+data:weight:aircraft:inertia:Ixz ||
+
+data:weight:propulsion:fuel:inertia:Iox ||
+data:weight:propulsion:fuel:inertia:Ioy ||
+data:weight:propulsion:fuel:inertia:Ioz ||
+data:weight:propulsion:fuel:inertia:Ix ||
+data:weight:propulsion:fuel:inertia:Iy ||
+data:weight:propulsion:fuel:inertia:Iz ||
+data:weight:propulsion:fuel:inertia:Ixz ||
+data:weight:propulsion:fuel:inertia:Wx ||
+data:weight:propulsion:fuel:inertia:Wy ||
+data:weight:propulsion:fuel:inertia:Wz ||
+
+data:weight:propulsion:powerplant:inertia:Iox ||
+data:weight:propulsion:powerplant:inertia:Ioy ||
+data:weight:propulsion:powerplant:inertia:Ioz ||
+data:weight:propulsion:powerplant:inertia:Ix ||
+data:weight:propulsion:powerplant:inertia:Iy ||
+data:weight:propulsion:powerplant:inertia:Iz ||
+data:weight:propulsion:powerplant:inertia:Ixz ||
+data:weight:propulsion:powerplant:inertia:Wx ||
+data:weight:propulsion:powerplant:inertia:Wy ||
+data:weight:propulsion:powerplant:inertia:Wz ||
+
+

@@ -28,7 +28,7 @@ _LOGGER = logging.getLogger(__name__)
 @RegisterSubmodel(SUBMODEL_FUSELAGE_CG, "fastga.submodel.weight.cg.airframe.fuselage.legacy")
 class ComputeFuselageCG(ExplicitComponent):
     """
-    Wing center of gravity estimation
+    Fuselage center of gravity estimation
 
     Based on a statistical analysis. See :cite:`roskampart5:1985`
     """
@@ -40,6 +40,8 @@ class ComputeFuselageCG(ExplicitComponent):
         self.add_input("data:geometry:fuselage:front_length", val=np.nan, units="m")
 
         self.add_output("data:weight:airframe:fuselage:CG:x", units="m")
+        self.add_output("data:weight:airframe:fuselage:CG:y", units="m")
+        self.add_output("data:weight:airframe:fuselage:CG:z", units="m")
 
         self.declare_partials(
             "data:weight:airframe:fuselage:CG:x", "data:geometry:fuselage:length", method="fd"
@@ -65,3 +67,5 @@ class ComputeFuselageCG(ExplicitComponent):
             x_cg_a2 = 0.39 * fus_length
 
         outputs["data:weight:airframe:fuselage:CG:x"] = x_cg_a2
+        outputs["data:weight:airframe:fuselage:CG:y"] = 0.0
+        outputs["data:weight:airframe:fuselage:CG:z"] = 0.0
