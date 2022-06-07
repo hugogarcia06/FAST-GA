@@ -3,12 +3,84 @@
 # my:variable||The description of my:variable, as long as needed, but on one line.
 # The separator "||" can be surrounded with spaces (that will be ignored)
 
+data:geometry:horizontal_tail:dihedral
+data:geometry:horizontal_tail:twist
+
+data:geometry:wing:dihedral
+data:geometry:wing:twist
+
+data:handling_qualities:lateral:derivatives:Cl:beta
+data:handling_qualities:lateral:derivatives:Cl:rollrate
+data:handling_qualities:lateral:derivatives:Cl:yawrate
+data:handling_qualities:lateral:derivatives:Cn:beta
+data:handling_qualities:lateral:derivatives:Cn:rollrate
+data:handling_qualities:lateral:derivatives:Cn:yawrate
+data:handling_qualities:lateral:derivatives:CY:beta
+data:handling_qualities:lateral:derivatives:CY:rollrate
+data:handling_qualities:lateral:derivatives:CY:yawrate
+
+data:handling_qualities:lateral:derivatives:fuselage:Cn:beta ||
+data:handling_qualities:lateral:derivatives:fuselage:CY:beta ||
+data:handling_qualities:lateral:derivatives:horizontal_tail:Cl:beta ||
+data:handling_qualities:lateral:derivatives:horizontal_tail:Cl:rollrate ||
+data:handling_qualities:lateral:derivatives:vertical_tail:Cl:beta ||
+data:handling_qualities:lateral:derivatives:vertical_tail:Cl:rollrate ||
+data:handling_qualities:lateral:derivatives:vertical_tail:Cl:yawrate ||
+data:handling_qualities:lateral:derivatives:vertical_tail:Cn:beta ||
+data:handling_qualities:lateral:derivatives:vertical_tail:CY:beta ||
+data:handling_qualities:lateral:derivatives:vertical_tail:CY:rollrate ||
+data:handling_qualities:lateral:derivatives:vertical_tail:CY:yawrate ||
+data:handling_qualities:lateral:derivatives:wing-body:Cl:beta ||
+data:handling_qualities:lateral:derivatives:wing:Cl:rollrate ||
+data:handling_qualities:lateral:derivatives:wing:Cl:yawrate ||
+data:handling_qualities:lateral:derivatives:wing:Cn:beta ||
+data:handling_qualities:lateral:derivatives:wing:Cn:yawrate ||
+data:handling_qualities:lateral:derivatives:wing:CY:beta ||
+data:handling_qualities:lateral:derivatives:wing:CY:rollrate
+
+data:handling_qualities:longitudinal:derivatives:CD:alpha ||
+data:handling_qualities:longitudinal:derivatives:CD:alpharate ||
+data:handling_qualities:longitudinal:derivatives:CD:pitchrate ||
+data:handling_qualities:longitudinal:derivatives:CD:speed ||
+data:handling_qualities:longitudinal:derivatives:CL:alpha ||
+data:handling_qualities:longitudinal:derivatives:CL:alpharate ||
+data:handling_qualities:longitudinal:derivatives:CL:pitchrate ||
+data:handling_qualities:longitudinal:derivatives:CL:speed ||
+data:handling_qualities:longitudinal:derivatives:Cm:alpha ||
+data:handling_qualities:longitudinal:derivatives:Cm:alpharate ||
+data:handling_qualities:longitudinal:derivatives:Cm:pitchrate ||
+data:handling_qualities:longitudinal:derivatives:Cm:speed ||
+
+
+data:handling_qualities:longitudinal:derivatives:horizontal_tail:CL:alpha ||
+data:handling_qualities:longitudinal:derivatives:horizontal_tail:CL:alpharate ||
+data:handling_qualities:longitudinal:derivatives:horizontal_tail:CL:pitchrate ||
+data:handling_qualities:longitudinal:derivatives:horizontal_tail:Cm:alpharate ||
+data:handling_qualities:longitudinal:derivatives:horizontal_tail:Cm:pitchrate ||
+data:handling_qualities:longitudinal:derivatives:wing:CL:alpha ||
+data:handling_qualities:longitudinal:derivatives:wing:CL:pitchrate ||
+data:handling_qualities:longitudinal:derivatives:wing:Cm:pitchrate ||
+data:handling_qualities:longitudinal:derivatives:thrust:Cm:alpha ||
+data:handling_qualities:longitudinal:derivatives:thrust:CX:speed ||
+data:handling_qualities:longitudinal:derivatives:thrust:Cm:speed ||
+
+
+
+data:handling_qualities:lateral:spacestate:matrixA ||
+data:handling_qualities:lateral:spacestate:matrixB ||
+data:handling_qualities:lateral:spacestate:eigenvalues ||
+
+data:handling_qualities:longitudinal:spacestate:matrixA ||
+data:handling_qualities:longitudinal:spacestate:matrixB ||
+data:handling_qualities:longitudinal:spacestate:eigenvalues ||
+
 data:handling_qualities:stick_fixed_static_margin || stick fixed static margin
 data:handling_qualities:stick_free_static_margin || stick free static margin
 
 data:constraints:horizontal_tail:takeoff_rotation || margin on the horizontal tail area with respect to the takeoff rotation constraint
 data:constraints:horizontal_tail:landing || margin on the horizontal tail area with respect to the landing constraint
 data:geometry:horizontal_tail:area || horizontal tail area
+
 
 data:constraints:vertical_tail:target_cruise_stability || margin on the vertical tail area with respect to the cruise stability constraint
 data:constraints:vertical_tail:crosswind_landing || margin on the vertical tail area with respect to the constraint due to crosswind landing
@@ -17,3 +89,16 @@ data:constraints:vertical_tail:engine_out_takeoff || margin on the vertical tail
 data:constraints:vertical_tail:engine_out_landing || margin on the vertical tail area with respect to the landing with one engine out condition
 
 data:geometry:vertical_tail:area || vertical tail area
+
+data:reference_flight_condition:alpha ||
+data:reference_flight_condition:altitude ||
+data:reference_flight_condition:CL ||
+data:reference_flight_condition:CD ||
+data:reference_flight_condition:CT ||
+data:reference_flight_condition:CG:x ||
+data:reference_flight_condition:CG:z ||
+data:reference_flight_condition:dynamic_pressure ||
+data:reference_flight_condition:mach ||
+data:reference_flight_condition:speed ||
+data:reference_flight_condition:theta ||
+data:reference_flight_condition:weight ||
