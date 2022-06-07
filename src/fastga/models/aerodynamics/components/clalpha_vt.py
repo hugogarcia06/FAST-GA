@@ -62,6 +62,7 @@ class ComputeClAlphaVT(FigureDigitization):
         self.add_input("data:geometry:fuselage:maximum_width", val=np.nan, units="m")
         self.add_input("data:geometry:fuselage:maximum_height", val=np.nan, units="m")
 
+        self.add_output("data:geometry:fuselage:depth_quarter_vt", units="m")
         if self.options["low_speed_aero"]:
             self.add_output("data:aerodynamics:vertical_tail:low_speed:CL_alpha", units="rad**-1")
             self.add_output("data:aerodynamics:vertical_tail:k_ar_effective")
@@ -105,6 +106,7 @@ class ComputeClAlphaVT(FigureDigitization):
 
         lambda_vt = inputs["data:geometry:vertical_tail:aspect_ratio"] * k_ar_effective
 
+        # Figure 10.12 Roskam Airplane Design Part VI
         if span_vt / avg_fus_depth < 2.0:
             kv = 0.75
         elif span_vt / avg_fus_depth < 3.5:
@@ -129,8 +131,12 @@ class ComputeClAlphaVT(FigureDigitization):
             )
         )
 
+        outputs["data:geometry:fuselage:depth_quarter_vt"] = avg_fus_depth
+
         if self.options["low_speed_aero"]:
             outputs["data:aerodynamics:vertical_tail:low_speed:CL_alpha"] = cl_alpha_vt
             outputs["data:aerodynamics:vertical_tail:k_ar_effective"] = k_ar_effective
         else:
             outputs["data:aerodynamics:vertical_tail:cruise:CL_alpha"] = cl_alpha_vt
+            outputs["data:aerodynamics:vertical_tail:k_ar_effective"] = k_ar_effective
+

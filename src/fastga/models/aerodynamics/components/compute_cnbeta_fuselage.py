@@ -45,7 +45,8 @@ class ComputeCnBetaFuselage(ExplicitComponent):
         self.add_input("data:geometry:wing:area", val=np.nan, units="m**2")
         self.add_input("data:geometry:wing:span", val=np.nan, units="m")
 
-        self.add_output("data:aerodynamics:fuselage:cruise:CnBeta")
+        self.add_output("data:aerodynamics:fuselage:cruise:CnBeta", units="rad**-1")
+        self.add_output("data:geometry:fuselage:volume", units="m**3")
 
         self.declare_partials("*", "*", method="fd")
 
@@ -67,3 +68,4 @@ class ComputeCnBetaFuselage(ExplicitComponent):
         cn_beta = -1.3 * volume_fus / wing_area / span * (l_f / width_max)
 
         outputs["data:aerodynamics:fuselage:cruise:CnBeta"] = cn_beta
+        outputs["data:geometry:fuselage:volume"] = volume_fus

@@ -482,9 +482,10 @@ class OPENVSPSimpleGeometry(ExternalCodeComp):
         self.options["command"] = [pth.join(target_directory, "vspaero.bat")]
         batch_file = open(self.options["command"][0], "w+")
         batch_file.write("@echo off\n")
+        # NOTE: added -stab to perform the stability analysis
         command = (
             pth.join(target_directory, VSPAERO_EXE_NAME)
-            + " "
+            + " -stab "   # TO PERFORM STABILITY ANALYSIS
             + input_file_list[1].replace(".vspaero", "")
             + " >nul 2>nul\n"
         )
@@ -705,7 +706,7 @@ class OPENVSPSimpleGeometry(ExternalCodeComp):
         batch_file.write("@echo off\n")
         command = (
             pth.join(target_directory, VSPAERO_EXE_NAME)
-            + " "
+            + " -stab "   # TO PERFORM STABILITY ANALYSIS
             + input_file_list[1].replace(".vspaero", "")
             + " >nul 2>nul\n"
         )
@@ -964,7 +965,7 @@ class OPENVSPSimpleGeometry(ExternalCodeComp):
         batch_file.write("@echo off\n")
         command = (
             pth.join(target_directory, VSPAERO_EXE_NAME)
-            + " "
+            + " -stab "   # TO PERFORM STABILITY ANALYSIS
             + input_file_list[1].replace(".vspaero", "")
             + " >nul 2>nul\n"
         )

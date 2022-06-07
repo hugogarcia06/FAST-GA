@@ -9,7 +9,7 @@ void main()
    string xsec_surf = GetXSecSurf( wid, 0 );
    string xsec = GetXSec( xsec_surf, 0 );
    
-   //===== Define wing globale dimensions =====//
+   //===== Define wing global dimensions =====//
    
    InsertXSec( wid, 1, XS_FILE_AIRFOIL );
    SetParmVal( GetParm(wid, "Tess_W", "Shape"), 41 );

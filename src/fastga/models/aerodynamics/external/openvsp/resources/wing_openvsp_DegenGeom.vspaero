@@ -19,4 +19,5 @@ WakeIters = 1
 NumberOfRotors = 0
 NumberOfControlGroups = 0 
 Preconditioner = Matrix 
-Karman-Tsien Correction = N
+Karman-Tsien Correction = Y
+Stability Type = 1
