@@ -17,6 +17,7 @@ data:geometry:cabin:seats:pilot:width || width of pilot seats
 data:geometry:cabin:luggage:mass_max || maximum luggage mass
 data:geometry:cabin:aisle_width || width of the aisle
 
+data:geometry:fuselage:depth_quarter_vt ||
 data:geometry:fuselage:wet_area || fuselage wet area
 data:geometry:fuselage:front_length || length of the front cone of the aircraft
 data:geometry:fuselage:length || total length of the fuselage
@@ -25,8 +26,11 @@ data:geometry:fuselage:maximum_height || maximum height of the fuselage
 data:geometry:fuselage:maximum_width || maximum width of the fuselage
 data:geometry:fuselage:PAX_length || length of the passenger compartment
 data:geometry:fuselage:rear_length || length of the rear cone of the aircraft
+data:geometry:fuselage:volume || estimation of fuselage volume
 
+data:geometry:horizontal_tail:area || horizontal tail surface area
 data:geometry:horizontal_tail:aspect_ratio || horizontal tail aspect ratio
+data:geometry:horizontal_tail:dihedral || dihedral angle of the horizontal tail considered positive for the tip above the root chord plane
 data:geometry:horizontal_tail:MAC:at25percent:x:from_wingMAC25 || distance along X between 25% MAC of wing and 25% MAC of horizontal tail
 data:geometry:horizontal_tail:MAC:at25percent:x:local || X-position of the 25% of mean aerodynamic chord of horizontal tail w.r.t. leading edge of root chord
 data:geometry:horizontal_tail:MAC:length || mean aerodynamic chord length of horizontal tail
@@ -34,15 +38,18 @@ data:geometry:horizontal_tail:MAC:y || Y-position of mean aerodynamic chord of h
 data:geometry:horizontal_tail:root:chord || chord length at root of horizontal tail
 data:geometry:horizontal_tail:span || horizontal tail span
 data:geometry:horizontal_tail:sweep_0 || sweep angle at leading edge of horizontal tail
+data:geometry:horizontal_tail:sweep_25 || sweep angle at quarter-chord point line of horizontal tail
 data:geometry:horizontal_tail:sweep_100 || sweep angle at trailing edge of horizontal tail
 data:geometry:horizontal_tail:tip:chord || chord length at tip of horizontal tail
 data:geometry:horizontal_tail:wet_area || wet area of horizontal tail
-data:geometry:horizontal_tail:z:from_wingMAC25 || Z-position of the horizontal tail w.r.t. 25% MAC of wing Z-position
+data:geometry:horizontal_tail:z:from_wingMAC25 || Z-position of the horizontal tail w.r.t. 25% MAC of wing
 data:geometry:horizontal_tail:elevator_chord_ratio || elevator chord ratio
 data:geometry:horizontal_tail:sweep_25 || sweep angle at 25% chord of horizontal tail
 data:geometry:horizontal_tail:taper_ratio || taper ratio of horizontal tail
+data:geometry:horizontal_tail:twist || ht twist angle between the tip and the root, negative for downwards rotation of the ht
 data:geometry:horizontal_tail:thickness_ratio || thickness ratio of horizontal tail
 
+data:geometry:vertical_tail:area || Surface area of the vertical tail
 data:geometry:vertical_tail:MAC:at25percent:x:from_wingMAC25 || distance along X between 25% MAC of wing and 25% MAC of vertical tail
 data:geometry:vertical_tail:MAC:at25percent:x:local || X-position of the 25% of mean aerodynamic chord of vertical tail w.r.t. leading edge of root chord
 data:geometry:vertical_tail:MAC:length || mean aerodynamic chord length of vertical tail
@@ -55,7 +62,10 @@ data:geometry:vertical_tail:tip:chord || chord length at tip of vertical tail
 data:geometry:vertical_tail:tip:x || X-position of the vertical tail tip chord leading edge
 data:geometry:vertical_tail:wet_area || wet area of vertical tail
 
+data:geometry:wing:area || Surface area of the wing
+data:geometry:wing:aspect_ratio || Aspect ratio of the wing
 data:geometry:wing:b_50 || actual length between root and tip along 50% of chord
+data:geometry:wing:dihedral || dihedral angle of the wing considered positive for the wing tip above the root chord plane
 data:geometry:wing:kink:chord || chord length at wing kink
 data:geometry:wing:kink:leading_edge:x:local || X-position of leading edge at wing kink w.r.t. leading edge of root chord
 data:geometry:wing:kink:thickness_ratio || thickness ratio at wing kink
@@ -63,19 +73,26 @@ data:geometry:wing:kink:y || Y-position of wing kink
 data:geometry:wing:MAC:leading_edge:x:local || X-position of leading edge of mean aerodynamic chord w.r.t. leading edge of root chord
 data:geometry:wing:MAC:length || length of mean aerodynamic chord of wing
 data:geometry:wing:MAC:y || Y-position of mean aerodynamic chord of wing
+data:geometry:wing:MAC:at25percent:x || X-position of the 25% of mean aerodynamic chord of wing w.r.t. aircraft nose (drives position of wing along fuselage)
 data:geometry:wing:outer_area || wing area outside of fuselage
 data:geometry:wing:root:thickness_ratio || thickness ratio at wing root
 data:geometry:wing:root:virtual_chord || virtual chord length at wing root if sweep angle of trailing edge of outer wing part was on the whole wing (no kink)
 data:geometry:wing:root:y || Y-position of wing root
 data:geometry:wing:root:chord || chord length at wing root
+data:geometry:wing:root:leading_edge:x:absolut || X-position of leading edge at wing root w.r.t. the tip of the cockpit
 data:geometry:wing:span || wing span
 data:geometry:wing:sweep_0 || sweep angle at leading edge of wing
+data:geometry:wing:sweep_25 || sweep angle at quarter-chord point line of wing
 data:geometry:wing:sweep_100_inner || sweep angle at trailing edge of wing (inner side of the kink)
 data:geometry:wing:sweep_100_outer || sweep angle at trailing edge of wing (outer side of the kink)
+data:geometry:wing:taper_ratio || wing taper ratio
 data:geometry:wing:tip:chord || chord length at wing tip
+data:geometry:wing:tip:half_chord_point:x:absolut || X-position of half chord point at wing tip w.r.t. the tip of the cockpit
 data:geometry:wing:tip:leading_edge:x:local || X-position of leading edge at wing tip w.r.t. leading edge of root chord
 data:geometry:wing:tip:thickness_ratio || thickness ratio at wing tip
 data:geometry:wing:tip:y || Y-position of wing tip
+data:geometry:wing:twist || wing twist angle between the tip and the root, negative for downwards rotation of the wing
+data:geometry:wing:vertical_position || distance from wing root quarter chord point to the fuselage centerline, positive below fuselage span centerline.
 data:geometry:wing:wet_area || wet area of wing
 
 data:geometry:landing_gear:height || height of the landing gear
@@ -98,6 +115,7 @@ data:aerodynamics:horizontal_tail:efficiency || ratio between the dynamic pressu
 
 data:geometry:flap:chord_ratio || flap chord as a percentage of the wing chord
 data:geometry:flap:span_ratio || flap span as a percentage of the wing span
+data:geometry:flap:flap_location ||
 data:geometry:flap_type || flap type (0.0 - plain flap, 2.0 - single slotted flap, 3.0 - split flap)
 data:geometry:has_T_tail || 0=horizontal tail is attached to fuselage / 1=horizontal tail is attached to top of vertical tail
 
