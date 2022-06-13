@@ -1,5 +1,10 @@
 <FASTOAD_model>
   <data>
+    <reference_flight_condition>
+      <mach is_input="True">0.2<!--mach number at reference flight condition--></mach>
+      <altitude units="m" is_input="True">10000<!--flight altitude at reference condition--></altitude>
+      <alpha units="deg" is_input="True">2.0<!--angle of attack at reference flight condition--></alpha>
+    </reference_flight_condition>
     <TLAR>
       <NPAX_design is_input="True">2.0<!--design number of passengers (two pilots are included de facto, meaning for a 2 seater, NPAX_design is equal to 0)--></NPAX_design>
       <luggage_mass_design units="kg" is_input="True">35.0<!--luggage design mass--></luggage_mass_design>
@@ -56,6 +61,8 @@
         <sweep_0 units="deg" is_input="False">6.491701638336776<!--sweep angle at leading edge of horizontal tail--></sweep_0>
         <sweep_100 units="deg" is_input="False">176.47164111047474<!--sweep angle at trailing edge of horizontal tail--></sweep_100>
         <sweep_25 units="deg" is_input="True">4.0<!--sweep angle at 25% chord of horizontal tail--></sweep_25>
+        <dihedral units="deg" is_input="True">0.0<!--dihedral angle of the horizontal tail--></dihedral>
+        <twist units="deg" is_input="True">0.0<!--twist angle of the horizontal tail--></twist>
         <taper_ratio is_input="True">0.613<!--taper ratio of horizontal tail--></taper_ratio>
         <thickness_ratio is_input="True">0.1<!--thickness ratio of horizontal tail--></thickness_ratio>
         <wet_area units="m**2" is_input="False">5.621594428453805<!--wet area of horizontal tail--></wet_area>
@@ -76,7 +83,7 @@
           <chord units="m" is_input="False">0.5317194505589341<!--chord length at tip of horizontal tail--></chord>
         </tip>
         <z>
-          <from_wingMAC25 units="m" is_input="False">0.0<!--Z-position of the horizontal tail w.r.t. 25% MAC of wing Z-position--></from_wingMAC25>
+          <from_wingMAC25 units="m" is_input="False">0.55<!--Z-position of the horizontal tail w.r.t. 25% MAC of wing Z-position--></from_wingMAC25>
         </z>
       </horizontal_tail>
       <landing_gear>
@@ -102,7 +109,7 @@
         <span units="m" is_input="False">1.6806760138409438<!--vertical tail span--></span>
         <sweep_0 units="deg" is_input="False">14.53215736047813<!--sweep angle at leading edge of vertical tail--></sweep_0>
         <sweep_100 units="deg" is_input="False">175.86234737574554<!--sweep angle at trailing edge of vertical tail--></sweep_100>
-        <sweep_25 units="deg" is_input="True">10.0<!--sweep angle at 25% chord of vertical tail--></sweep_25>
+        <sweep_25 units="deg" is_input="True">26.0<!--sweep angle at 25% chord of vertical tail--></sweep_25>
         <taper_ratio is_input="True">0.502<!--taper ratio of vertical tail--></taper_ratio>
         <thickness_ratio is_input="True">0.1<!--thickness ratio of vertical tail--></thickness_ratio>
         <wet_area units="m**2" is_input="False">2.9659054566752987<!--wet area of vertical tail--></wet_area>
@@ -120,7 +127,7 @@
           <x_ratio is_input="True">0.3<!--position of the point of maximum thickness as a ratio of vertical tail chord--></x_ratio>
         </max_thickness>
         <root>
-          <chord units="m" is_input="False">1.1189587309194033<!--chord length at root of vertical tail--></chord>
+          <chord units="m" is_input="False">1.2<!--chord length at root of vertical tail--></chord>
         </root>
         <rudder>
           <chord_ratio is_input="True">0.33<!--flap rudder as a percentage of the wing chord--></chord_ratio>
@@ -140,6 +147,8 @@
         <sweep_100_inner units="rad" is_input="False">-0.10666425745434216<!--sweep angle at trailing edge of wing (inner side of the kink)--></sweep_100_inner>
         <sweep_100_outer units="rad" is_input="False">-0.10666425745434216<!--sweep angle at trailing edge of wing (outer side of the kink)--></sweep_100_outer>
         <sweep_25 units="deg" is_input="True">0.0<!--sweep angle at 25% chord of wing--></sweep_25>
+        <dihedral units="deg" is_input="True">6.5<!--dihedral angle of the wing--></dihedral>
+        <twist units="deg" is_input="True">0.0<!--twist angle of the wing--></twist>
         <taper_ratio is_input="True">0.5<!--taper ratio of wing--></taper_ratio>
         <thickness_ratio is_input="True">0.12<!--mean thickness ratio of wing--></thickness_ratio>
         <wet_area units="m**2" is_input="False">24.44077908858997<!--wet area of wing--></wet_area>

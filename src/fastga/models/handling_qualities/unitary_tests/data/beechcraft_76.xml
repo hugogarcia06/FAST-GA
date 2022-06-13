@@ -46,7 +46,7 @@
       <fuselage>
         <PAX_length units="m" is_input="False">1.5<!--length of passenger-dedicated zone--></PAX_length>
         <front_length units="m" is_input="False">1.87292<!--length of front non-cylindrical part of the fuselage--></front_length>
-        <length units="m" is_input="False">8.994853092667494<!--total fuselage length--></length>
+        <length units="m" is_input="False">8.99<!--total fuselage length--></length>
         <luggage_length units="m" is_input="False">0.6967546536799178<!--length of the luggage compartment--></luggage_length>
         <maximum_height units="m" is_input="False">1.3378<!--maximum fuselage height--></maximum_height>
         <maximum_width units="m" is_input="False">1.1978<!--maximum fuselage width--></maximum_width>
@@ -58,9 +58,9 @@
         <aspect_ratio is_input="True">3.84<!--aspect ratio of horizontal tail--></aspect_ratio>
         <elevator_chord_ratio is_input="True">0.3<!--elevator chord ratio--></elevator_chord_ratio>
         <span units="m" is_input="False">3.7749872946214444<!--horizontal tail span--></span>
-        <sweep_0 units="deg" is_input="False">3.9999999999999925<!--sweep angle at leading edge of horizontal tail--></sweep_0>
-        <sweep_100 units="deg" is_input="False">3.9999999999999925<!--sweep angle at trailing edge of horizontal tail--></sweep_100>
-        <sweep_25 units="deg" is_input="True">4.0<!--sweep angle at 25% chord of horizontal tail--></sweep_25>
+        <sweep_0 units="deg" is_input="False">0.0<!--sweep angle at leading edge of horizontal tail--></sweep_0>
+        <sweep_100 units="deg" is_input="False">0.0<!--sweep angle at trailing edge of horizontal tail--></sweep_100>
+        <sweep_25 units="deg" is_input="True">0.0<!--sweep angle at 25% chord of horizontal tail--></sweep_25>
         <dihedral units="deg" is_input="True">0.0<!--dihedral angle of the horizontal tail--></dihedral>
         <twist units="deg" is_input="True">0.0<!--twist angle of the horizontal tail--></twist>
         <taper_ratio is_input="True">1.0<!--taper ratio of horizontal tail--></taper_ratio>
@@ -109,7 +109,7 @@
         <span units="m" is_input="False">1.458396213013796<!--vertical tail span--></span>
         <sweep_0 units="deg" is_input="False">34.02277016960491<!--sweep angle at leading edge of vertical tail--></sweep_0>
         <sweep_100 units="deg" is_input="False">15.861989697667921<!--sweep angle at trailing edge of vertical tail--></sweep_100>
-        <sweep_25 units="deg" is_input="True">30.0<!--sweep angle at 25% chord of vertical tail--></sweep_25>
+        <sweep_25 units="deg" is_input="True">38.0<!--sweep angle at 25% chord of vertical tail--></sweep_25>
         <taper_ratio is_input="True">0.62<!--taper ratio of vertical tail--></taper_ratio>
         <thickness_ratio is_input="True">0.125<!--thickness ratio of vertical tail--></thickness_ratio>
         <wet_area units="m**2" is_input="False">3.7221091497327174<!--wet area of vertical tail--></wet_area>
@@ -156,7 +156,7 @@
           <length units="m" is_input="False">1.4541595355959134<!--length of mean aerodynamic chord of wing--></length>
           <y units="m" is_input="False">2.901411813397747<!--Y-position of mean aerodynamic chord of wing--></y>
           <at25percent>
-            <x units="m" is_input="False">3.4550815011709046<!--X-position of the 25% of mean aerodynamic chord of wing w.r.t. aircraft nose (drives position of wing along fuselage)--></x>
+            <x units="m" is_input="False">3.1135<!--X-position of the 25% of mean aerodynamic chord of wing w.r.t. aircraft nose (drives position of wing along fuselage)--></x>
           </at25percent>
           <leading_edge>
             <x>
