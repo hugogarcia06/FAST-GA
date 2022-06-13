@@ -118,8 +118,9 @@ def polar_result_retrieve(tmp_folder):
 
 
 def compute_stab(
+    add_fuselage: bool,
     XML_FILE: str,
-):
+    ):
     """Compute stability coefficients for the whole aircraft"""
     # Create result temporary directory
     results_folder = _create_tmp_directory()
@@ -139,6 +140,7 @@ def compute_stab(
     problem = run_system(
         ComputeSTABopenvsp(
             result_folder_path=results_folder.name,
+            add_fuselage=add_fuselage
         ),
         ivc,
     )
@@ -149,6 +151,7 @@ def compute_stab(
     run_system(
         ComputeSTABopenvsp(
             result_folder_path=results_folder.name,
+            add_fuselage=add_fuselage
         ),
         ivc,
     )
@@ -170,6 +173,7 @@ def compute_stab(
 
 
 def comp_stab_coef(
+        add_fuselage,
         XML_FILE,
         cL_u,
         cD_u,
@@ -191,7 +195,7 @@ def comp_stab_coef(
         cn_r
 ):
     """Tests aircraft stability at high speed!"""
-    problem = compute_stab(XML_FILE)
+    problem = compute_stab(add_fuselage, XML_FILE)
 
     # Check obtained value(s) is/(are) correct
     assert problem["data:handling_qualities:longitudinal:derivatives:CL:speed"] == pytest.approx(

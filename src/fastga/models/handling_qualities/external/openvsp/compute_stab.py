@@ -40,6 +40,9 @@ class ComputeSTABopenvsp(Group):
         self.options.declare(
             "vtp_airfoil_file", default=DEFAULT_VTP_AIRFOIL, types=str, allow_none=True
         )
+        self.options.declare(
+            "add_fuselage", default=False, types=bool, allow_none=True
+        )
 
     def setup(self):
 
@@ -50,7 +53,8 @@ class ComputeSTABopenvsp(Group):
                 openvsp_exe_path=self.options["openvsp_exe_path"],
                 wing_airfoil_file=self.options["wing_airfoil_file"],
                 htp_airfoil_file=self.options["htp_airfoil_file"],
-                vtp_airfoil_file=self.options["vtp_airfoil_file"]
+                vtp_airfoil_file=self.options["vtp_airfoil_file"],
+                add_fuselage=self.options["add_fuselage"]
             ),
             promotes=["*"],
         )

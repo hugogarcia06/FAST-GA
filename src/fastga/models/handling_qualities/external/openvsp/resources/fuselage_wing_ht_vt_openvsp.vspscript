@@ -1,0 +1,185 @@
+
+//==== Create A Multi Section Wing, Horizontal Tail and Vertical Tail and Change Some Parameters ====//
+
+void main()
+{
+	//==== Add Fuselage ====//
+
+	string fid = AddGeom( "TransportFuse", "" );
+	SetParmVal( GetParm(fid, "Abs_Or_Relitive_flag", "XForm"), 0.0 );
+
+	SetParmVal( GetParm(fid, "Length", "Design"), fus_length );
+	SetParmVal( GetParm(fid, "Diameter", "Design"), fus_diameter );
+	SetParmVal( GetParm(fid, "NoseMult", "Design"), fus_front_length );
+	SetParmVal( GetParm(fid, "AftMult", "Design"), fus_rear_length );
+	SetParmVal( GetParm(fid, "NoseCenter", "Design"), -0.1 );
+	SetParmVal( GetParm(fid, "AftCenter", "Design"), 0.1 );
+
+    //==== Add Wing ====//
+
+    string wid = AddGeom( "WING", fid);
+    SetGeomName(wid, "Wing");
+    string xsec_surf = GetXSecSurf( wid, 0 );
+    string xsec = GetXSec( xsec_surf, 0 );
+
+    //===== Insert More Sections =====//
+    InsertXSec( wid, 1, XS_FILE_AIRFOIL );
+
+    //===== Define wing global dimensions =====//
+    SetParmVal( wid, "Trans_Attach_Flag", "Attach", 1.0 );
+
+    SetParmVal( wid, "RotateAirfoilMatchDideralFlag", "WingGeom", 1.0 );
+    SetParmVal( GetParm(wid, "Tess_W", "Shape"), 41 );
+    SetParmVal( GetParm(wid, "LECluster", "WingGeom"), 0.7 );
+    SetParmVal( GetParm(wid, "TECluster", "WingGeom"), 0.9 );
+    SetParmVal( GetParm(wid, "X_Rel_Location", "XForm"), x_wing );
+    SetParmVal( GetParm(wid, "Z_Rel_Location", "XForm"), z_wing );
+    Update();
+
+    //===== Define wing 1st Section ====//
+    SetParmVal( GetParm(wid, "Span", "XSec_1"), y1_wing );
+    SetParmVal( GetParm(wid, "Root_Chord", "XSec_1"), l2_wing );
+    SetParmVal( GetParm(wid, "Tip_Chord", "XSec_1"), l2_wing );
+    SetParmVal( GetParm(wid, "Sweep", "XSec_1"), 0.0 );
+    SetParmVal( GetParm(wid, "Sec_Sweep_Location", "XSec_1"), 0.7 );
+    SetParmVal( GetParm(wid, "Sweep_Location", "XSec_1"), 0 );
+    SetParmVal( GetParm(wid, "Dihedral", "XSec_1"), 0.0 );
+    SetParmVal( GetParm(wid, "Twist", "XSec_1"), 0.0 );
+    SetParmVal( GetParm(wid, "SectTess_U", "XSec_1"), 8 );
+    Update();
+
+    //===== Define wing 2nd Section ====//
+    SetParmVal( GetParm(wid, "Span", "XSec_2"), span2_wing );
+    SetParmVal( GetParm(wid, "Root_Chord", "XSec_2"), l2_wing );
+    SetParmVal( GetParm(wid, "Tip_Chord", "XSec_2"), l4_wing );
+    SetParmVal( GetParm(wid, "Sweep", "XSec_2"), sweep_0_wing );
+    SetParmVal( GetParm(wid, "Sec_Sweep_Location", "XSec_2"), 0.7 );
+    SetParmVal( GetParm(wid, "Sweep_Location", "XSec_2"), 0 );
+    SetParmVal( GetParm(wid, "Dihedral", "XSec_2"), dihedral_wing );
+    SetParmVal( GetParm(wid, "Twist", "XSec_2"), twist_wing );
+    SetParmVal( GetParm(wid, "SectTess_U", "XSec_2"), 33 );
+    SetParmVal( GetParm(wid, "OutCluster", "XSec_2"), 0.9 );
+    Update();
+
+    //==== Change Airfoil 0 shape ====//
+    ChangeXSecShape( xsec_surf, 0, XS_FILE_AIRFOIL );
+    xsec = GetXSec( xsec_surf, 0 );
+    ReadFileAirfoil( xsec, airfoil_0_file );
+    Update();
+
+    //==== Change Airfoil 1 (y=y2) shape ====//
+    ChangeXSecShape( xsec_surf, 1, XS_FILE_AIRFOIL );
+    xsec = GetXSec( xsec_surf, 1 );
+    ReadFileAirfoil( xsec, airfoil_1_file );
+    Update();
+
+    //==== Change Airfoil 2 (y=y4) shape ====//
+    ChangeXSecShape( xsec_surf, 2, XS_FILE_AIRFOIL );
+    xsec = GetXSec( xsec_surf, 2 );
+    ReadFileAirfoil( xsec, airfoil_2_file );
+    Update();
+
+
+    //==== Add wing (HTP) ====//
+
+    string hid = AddGeom("WING", fid);
+    SetGeomName(hid, "HTP");
+    xsec_surf = GetXSecSurf( hid, 0 );
+
+    //===== Define htp global dimensions =====//
+    SetParmVal( hid, "RotateAirfoilMatchDideralFlag", "WingGeom", 1.0 );
+    SetParmVal( hid, "Trans_Attach_Flag", "Attach", 1.0 );
+
+
+    SetParmVal(hid, "Tess_W", "Shape", 31);
+    SetParmVal( GetParm(hid, "LECluster", "WingGeom"), 0.7 );
+    SetParmVal( GetParm(hid, "TECluster", "WingGeom"), 0.9 );
+    SetParmVal( GetParm(hid, "X_Rel_Location", "XForm"), x_htp );
+    SetParmVal( GetParm(hid, "Z_Rel_Location", "XForm"), z_htp );
+    Update();
+
+    //===== Define HTP 1st Section ====//
+    SetParmVal( GetParm(hid, "Span", "XSec_1"), semispan_htp );
+    SetParmVal( GetParm(hid, "Root_Chord", "XSec_1"), root_chord_htp );
+    SetParmVal( GetParm(hid, "Tip_Chord", "XSec_1"), tip_chord_htp );
+    SetParmVal( GetParm(hid, "Sweep", "XSec_1"), sweep_25_htp );
+    SetParmVal( GetParm(hid, "Sweep_Location", "XSec_1"), 0.25);
+    SetParmVal( GetParm(hid, "Dihedral", "XSec_1"), dihedral_htp );
+    SetParmVal( GetParm(hid, "Twist", "XSec_1"), twist_htp );
+    SetParmVal( GetParm(hid, "SectTess_U", "XSec_1"), 25);
+    Update();
+
+    //==== Change Airfoils 0 shape  ====//
+    ChangeXSecShape( xsec_surf, 0, XS_FILE_AIRFOIL );
+    xsec = GetXSec( xsec_surf, 0 );
+    ReadFileAirfoil( xsec, airfoil_3_file );
+    Update();
+
+    //==== Change Airfoils 1 shape  ====//
+    ChangeXSecShape( xsec_surf, 1, XS_FILE_AIRFOIL );
+    xsec = GetXSec( xsec_surf, 1 );
+    ReadFileAirfoil( xsec, airfoil_4_file );
+    Update();
+
+
+    //==== Add wing (VTP) ====//
+
+    string vid = AddGeom("WING", fid);
+    SetGeomName(vid, "VTP");
+    xsec_surf = GetXSecSurf( vid, 0 );
+
+    //===== Define vtp global dimensions =====//
+    // Turn Symmetry OFF //
+    string sym_id_vid = FindParm( vid, "Sym_Planar_Flag", "Sym" );
+    SetParmVal ( sym_id_vid, 0 );
+    Update();
+
+    SetParmVal( vid, "Trans_Attach_Flag", "Attach", 1.0 );
+
+    SetParmVal(vid, "Tess_W", "Shape", 31);
+    SetParmVal( GetParm(vid, "LECluster", "WingGeom"), 0.7 );
+    SetParmVal( GetParm(vid, "TECluster", "WingGeom"), 0.9 );
+    SetParmVal( GetParm(vid, "X_Rel_Rotation", "XForm"), 90.0 );
+    SetParmVal( GetParm(vid, "X_Rel_Location", "XForm"), x_vtp );
+    SetParmVal( GetParm(vid, "Z_Rel_Location", "XForm"), z_vtp );
+    Update();
+
+    //===== Define VTP 1st Section ====//
+    SetParmVal( GetParm(vid, "Span", "XSec_1"), span_vtp );
+    SetParmVal( GetParm(vid, "Root_Chord", "XSec_1"), root_chord_vtp );
+    SetParmVal( GetParm(vid, "Tip_Chord", "XSec_1"), tip_chord_vtp );
+    SetParmVal( GetParm(vid, "Sweep", "XSec_1"), sweep_25_vtp );
+    SetParmVal( GetParm(vid, "Sweep_Location", "XSec_1"), 0.25);
+    SetParmVal( GetParm(vid, "SectTess_U", "XSec_1"), 25);
+    Update();
+
+    //==== Change Airfoils 0 shape  ====//
+    ChangeXSecShape( xsec_surf, 0, XS_FILE_AIRFOIL );
+    xsec = GetXSec( xsec_surf, 0 );
+    ReadFileAirfoil( xsec, airfoil_5_file );
+    Update();
+
+    //==== Change Airfoils 1 shape  ====//
+    ChangeXSecShape( xsec_surf, 1, XS_FILE_AIRFOIL );
+    xsec = GetXSec( xsec_surf, 1 );
+    ReadFileAirfoil( xsec, airfoil_6_file );
+    Update();
+
+
+    //==== Check For API Errors ====//
+
+    while ( GetNumTotalErrors() > 0 )
+    {
+        ErrorObj err = PopLastError();
+        Print(err.GetErrorString());
+    }
+
+    //==== Set File Name ====//
+
+    SetComputationFileName( DEGEN_GEOM_CSV_TYPE, csv_file );
+
+    //==== Run Degen Geom ====//
+    ComputeDegenGeom( SET_ALL, DEGEN_GEOM_CSV_TYPE );
+
+}
+   
