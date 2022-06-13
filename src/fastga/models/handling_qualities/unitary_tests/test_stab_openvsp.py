@@ -34,6 +34,8 @@ def test_openvsp_comp_stab_coef():
 
     add_fuselage = True
 
+    prueba git
+
     # Check values
     cL_u = 0.0104104
     cD_u = 0.0002405
