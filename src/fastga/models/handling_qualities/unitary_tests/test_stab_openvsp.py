@@ -32,6 +32,8 @@ def test_openvsp_comp_stab_coef():
     - Mach = 0.2
     """
 
+    add_fuselage = True
+
     # Check values
     cL_u = 0.0104104
     cD_u = 0.0002405
@@ -53,6 +55,7 @@ def test_openvsp_comp_stab_coef():
     cn_r = 0.0006449
 
     comp_stab_coef(
+        add_fuselage,
         XML_FILE,
         cL_u,
         cD_u,
@@ -71,7 +74,7 @@ def test_openvsp_comp_stab_coef():
         cn_p,
         cY_r,
         cl_r,
-        cn_r
+        cn_r,
     )
 
 
