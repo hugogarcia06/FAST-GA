@@ -178,37 +178,157 @@ class OPENVSPSimpleGeometry(ExternalCodeComp):
         fus_max_width = float(inputs["data:geometry:fuselage:maximum_width"])
         fus_max_height = float(inputs["data:geometry:fuselage:maximum_height"])
 
+        if self.options["add_fuselage"]:
+            geometry_set = np.around(
+                np.array(
+                    [
+                        sweep25_wing,
+                        taper_ratio_wing,
+                        aspect_ratio_wing,
+                        dihedral_wing,
+                        twist_wing,
+                        sweep25_htp,
+                        taper_ratio_htp,
+                        aspect_ratio_htp,
+                        sweep25_vtp,
+                        taper_ratio_vtp,
+                        aspect_ratio_vtp,
+                        mach,
+                        area_ratio_htp,
+                        area_ratio_vtp,
+                        fus_length,
+                        fus_rear_length,
+                        fus_front_length,
+                        fus_max_width,
+                        fus_max_height
+                    ]
+                ),
+                decimals=6,
+            )
+        else:
+            geometry_set = np.around(
+                np.array(
+                    [
+                        sweep25_wing,
+                        taper_ratio_wing,
+                        aspect_ratio_wing,
+                        dihedral_wing,
+                        twist_wing,
+                        sweep25_htp,
+                        taper_ratio_htp,
+                        aspect_ratio_htp,
+                        sweep25_vtp,
+                        taper_ratio_vtp,
+                        aspect_ratio_vtp,
+                        mach,
+                        area_ratio_htp,
+                        area_ratio_vtp
+                    ]
+                ),
+                decimals=6,
+            )
+
         # Search if results already exist:
         result_folder_path = self.options["result_folder_path"]
         result_file_path = None
         saved_area_ratio_htp = 1.0
         saved_area_ratio_vtp = 1.0
+        if result_folder_path != "":
+            if not self.options["add_fuselage"]:
+                result_file_path, saved_area_ratio_htp, saved_area_ratio_vtp = self.search_results(
+                    result_folder_path, geometry_set
+                )
+            else:
+                result_file_path, saved_area_ratio_htp, saved_area_ratio_vtp = self.search_results_fuselage(
+                    result_folder_path, geometry_set
+                )
+        # If no result saved for that geometry under this mach condition, computation is done
+        if result_file_path is None:
 
-        # Compute complete aircraft @ 0°/X° angle of attack
-        # NOTE: this is where the computation by OpenVSP is performed.
-        aircraft_stab_coef = self.compute_aircraft(inputs, outputs, altitude, mach, aoa_angle)
+            # Create result folder first (if it must fail, let it fail as soon as possible)
+            if result_folder_path != "":
+                if not os.path.exists(result_folder_path):
+                    os.makedirs(pth.join(result_folder_path), exist_ok=True)
 
-        # Post-process aircraft stability data (dictionary) -------------------------------------------------------
-        cL_u = aircraft_stab_coef["cL_u"]
-        cD_u = aircraft_stab_coef["cD_u"]
-        cm_u = aircraft_stab_coef["cm_u"]
-        cL_alpha = aircraft_stab_coef["cL_alpha"]
-        cD_alpha = aircraft_stab_coef["cD_alpha"]
-        cm_alpha = aircraft_stab_coef["cm_alpha"]
-        cL_q = aircraft_stab_coef["cL_q"]
-        cD_q = aircraft_stab_coef["cD_q"]
-        cm_q = aircraft_stab_coef["cm_q"]
-        cY_beta = aircraft_stab_coef["cY_beta"]
-        cl_beta = aircraft_stab_coef["cl_beta"]
-        cn_beta = aircraft_stab_coef["cn_beta"]
-        cY_p = aircraft_stab_coef["cY_p"]
-        cl_p = aircraft_stab_coef["cl_p"]
-        cn_p = aircraft_stab_coef["cn_p"]
-        cY_r = aircraft_stab_coef["cY_r"]
-        cl_r = aircraft_stab_coef["cl_r"]
-        cn_r = aircraft_stab_coef["cn_r"]
+            # Save the geometry (result_file_path is None entering the function)
+            if self.options["result_folder_path"] != "":
+                if not self.options["add_fuselage"]:
+                    result_file_path = self.save_geometry(result_folder_path, geometry_set)
+                else:
+                    result_file_path = self.save_geometry_fuselage(result_folder_path, geometry_set)
 
+            # Compute complete aircraft @ 0°/X° angle of attack
+            # NOTE: this is where the computation by OpenVSP is performed.
+            aircraft_stab_coef = self.compute_aircraft(inputs, outputs, altitude, mach, aoa_angle)
 
+            # Post-process aircraft stability data (dictionary) -------------------------------------------------------
+            cL_u = aircraft_stab_coef["cL_u"]
+            cD_u = aircraft_stab_coef["cD_u"]
+            cm_u = aircraft_stab_coef["cm_u"]
+            cL_alpha = aircraft_stab_coef["cL_alpha"]
+            cD_alpha = aircraft_stab_coef["cD_alpha"]
+            cm_alpha = aircraft_stab_coef["cm_alpha"]
+            cL_q = aircraft_stab_coef["cL_q"]
+            cD_q = aircraft_stab_coef["cD_q"]
+            cm_q = aircraft_stab_coef["cm_q"]
+            cY_beta = aircraft_stab_coef["cY_beta"]
+            cl_beta = aircraft_stab_coef["cl_beta"]
+            cn_beta = aircraft_stab_coef["cn_beta"]
+            cY_p = aircraft_stab_coef["cY_p"]
+            cl_p = aircraft_stab_coef["cl_p"]
+            cn_p = aircraft_stab_coef["cn_p"]
+            cY_r = aircraft_stab_coef["cY_r"]
+            cl_r = aircraft_stab_coef["cl_r"]
+            cn_r = aircraft_stab_coef["cn_r"]
+
+            # Resize vectors -----------------------------------------------------------------------
+
+            # Save results to defined path ---------------------------------------------------------
+            if self.options["result_folder_path"] != "":
+                results = [
+                    cL_u,
+                    cD_u,
+                    cm_u,
+                    cL_alpha,
+                    cD_alpha,
+                    cm_alpha,
+                    cL_q,
+                    cD_q,
+                    cm_q,
+                    cY_beta,
+                    cl_beta,
+                    cn_beta,
+                    cY_p,
+                    cl_p,
+                    cn_p,
+                    cY_r,
+                    cl_r,
+                    cn_r
+                ]
+                self.save_results(result_file_path, results)
+
+        # Else retrieved results are used, eventually adapted with new area ratio
+        else:
+            # Read values from result file ---------------------------------------------------------
+            data = self.read_results(result_file_path)
+            cL_u = float(data.loc["cL_u", 0])
+            cD_u = float(data.loc["cD_u", 0])
+            cm_u = float(data.loc["cm_u", 0])
+            cL_alpha = float(data.loc["cL_alpha", 0])
+            cD_alpha = float(data.loc["cD_alpha", 0])
+            cm_alpha = float(data.loc["cm_alpha", 0])
+            cL_q = float(data.loc["cL_q", 0])
+            cD_q = float(data.loc["cD_q", 0])
+            cm_q = float(data.loc["cm_q", 0])
+            cY_beta = float(data.loc["cY_beta", 0])
+            cl_beta = float(data.loc["cl_beta", 0])
+            cn_beta = float(data.loc["cn_beta", 0])
+            cY_p = float(data.loc["cY_p", 0])
+            cl_p = float(data.loc["cl_p", 0])
+            cn_p = float(data.loc["cn_p", 0])
+            cY_r = float(data.loc["cY_r", 0])
+            cl_r = float(data.loc["cl_r", 0])
+            cn_r = float(data.loc["cn_r", 0])
 
         return (
             cL_u,
