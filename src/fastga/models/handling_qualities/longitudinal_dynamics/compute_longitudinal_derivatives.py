@@ -17,7 +17,7 @@ from fastga.models.handling_qualities.longitudinal_dynamics.components.horizonta
     ComputeHTLongitudinalDerivatives
 from fastga.models.handling_qualities.longitudinal_dynamics.components.thrust.compute_thrust_longitudinal_derivatives import \
     ComputeThrustLongitudinalDerivatives
-from fastga.models.handling_qualities.longitudinal_dynamics.components.wing.compute_wing_derivatives import \
+from fastga.models.handling_qualities.longitudinal_dynamics.components.wing.compute_wing_longitudinal_derivatives import \
     ComputeWingLongitudinalDerivatives
 
 from fastga.models.handling_qualities.longitudinal_dynamics.derivatives_alpha import AoADerivatives
