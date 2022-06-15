@@ -19,9 +19,9 @@ from fastga.models.handling_qualities.longitudinal_dynamics.components.thrust.cm
 
 
 class ComputeThrustLongitudinalDerivatives(om.Group):
-    # TODOC
     """
-
+    Computes the longitudinal stability derivatives associated to thrust via the semi-empirical methods
+    found in the DATCOM.
     """
 
     def setup(self):

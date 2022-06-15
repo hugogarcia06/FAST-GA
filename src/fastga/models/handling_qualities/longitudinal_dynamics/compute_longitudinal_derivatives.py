@@ -28,9 +28,8 @@ from fastga.models.handling_qualities.longitudinal_dynamics.derivatives_speed im
 
 # TODO: Register Submodel
 class ComputeComponentsLongitudinalDerivatives(om.Group):
-    # TODOC
     """
-
+    Class to compute the longitudinal stability derivatives from each component via the semi-empirical approach.
     """
 
     def setup(self):
@@ -49,11 +48,15 @@ class ComputeComponentsLongitudinalDerivatives(om.Group):
 
 # TODO: Register Submodel
 class ComputeLongitudinalDerivatives(om.Group):
+    """
+    Class to compute the total longitudinal stability derivatives of the aircraft via the semi-empirical approach.
+    """
 
     def setup(self):
 
         self.add_subsystem(
-            "components_longitudinal_derivatives", ComputeComponentsLongitudinalDerivatives(), promotes=["*"]
+            "components_longitudinal_derivatives", ComputeComponentsLongitudinalDerivatives(),
+            promotes=["*"]
         )
 
         self.add_subsystem(

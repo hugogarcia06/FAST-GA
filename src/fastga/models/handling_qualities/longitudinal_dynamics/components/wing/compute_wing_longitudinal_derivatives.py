@@ -21,9 +21,9 @@ from fastga.models.handling_qualities.longitudinal_dynamics.components.wing.cm_p
 
 
 class ComputeWingLongitudinalDerivatives(om.Group):
-    # TODOC
     """
-
+    Computes the longitudinal stability derivatives associated to the wing via the semi-empirical methods
+    found in the DATCOM.
     """
 
     def setup(self):
