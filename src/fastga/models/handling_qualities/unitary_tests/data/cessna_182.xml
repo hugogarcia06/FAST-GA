@@ -1,0 +1,123 @@
+<!--
+  ~ This file is part of FAST-OAD : A framework for rapid Overall Aircraft Design
+  ~ Copyright (C) 2022 ONERA & ISAE-SUPAERO
+  ~ FAST is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<FASTOAD_model>
+    <data>
+        <geometry>
+            <has_T_tail is_input="True">1.0<!--0=horizontal tail is attached to fuselage / 1=horizontal tail is attached to top of vertical tail--></has_T_tail>
+            <fuselage>
+                <maximum_height units="ft" is_input="False">1.3378<!--maximum fuselage height--></maximum_height>
+                <maximum_width units="ft" is_input="False">1.3378<!--maximum fuselage height--></maximum_width>
+                <rear_length units="ft" is_input="False">4.225178438987577<!--length of rear non-cylindrical part of the fuselage--></rear_length>
+                <front_length units="ft" is_input="False">1.87292<!--length of front non-cylindrical part of the fuselage--></front_length>
+                <length units="ft" is_input="False">8.99<!--total fuselage length--></length>
+            </fuselage>
+            <wing>
+                <area units="ft**2" is_input="False">16.887140554758876<!--wing reference area--></area>
+                <aspect_ratio is_input="True">7.981<!--wing aspect ratio--></aspect_ratio>
+                <sweep_0 units="deg" is_input="False">0.0<!--sweep angle at leading edge of wing--></sweep_0>
+                <sweep_25 units="deg" is_input="True">0.0<!--sweep angle at 25% chord of wing--></sweep_25>
+                <span units="ft" is_input="False">11.605647253590986<!--wing span--></span>
+                <dihedral units="deg" is_input="True">6.5<!--dihedral angle of the wing--></dihedral>
+                <twist units="deg" is_input="True">0.0<!--twist angle of the wing--></twist>
+                <MAC>
+                    <length units="ft" is_input="False">1.4541595355959134<!--length of mean aerodynamic chord of wing--></length>
+                </MAC>
+            </wing>
+            <horizontal_tail>
+                <area units="ft**2" is_input="False">3.7139017292000687<!--horizontal tail area--></area>
+                <aspect_ratio is_input="True">3.84<!--aspect ratio of horizontal tail--></aspect_ratio>
+                <taper_ratio is_input="True">1.0<!--taper ratio of horizontal tail--></taper_ratio>
+                <span units="ft" is_input="False">3.7749872946214444<!--horizontal tail span--></span>
+                <sweep_0 units="deg" is_input="False">0.0<!--sweep angle at leading edge of horizontal tail--></sweep_0>
+                <dihedral units="deg" is_input="True">0.0<!--dihedral angle of the horizontal tail--></dihedral>
+                <twist units="deg" is_input="True">0.0<!--twist angle of the horizontal tail--></twist>
+                <MAC>
+                    <length units="ft" is_input="False">0.9830696079743345<!--mean aerodynamic chord length of horizontal tail--></length>
+                    <at25percent>
+                        <x>
+                            <from_wingMAC25 units="ft" is_input="True">4.8<!--distance along X between 25% MAC of wing and 25% MAC of horizontal tail--></from_wingMAC25>
+                        </x>
+                    </at25percent>
+                </MAC>
+                <z>
+                    <from_wingMAC25 units="ft" is_input="False">1.458396213013796<!--Z-position of the horizontal tail w.r.t. 25% MAC of wing Z-position--></from_wingMAC25>
+                </z>
+            </horizontal_tail>
+            <vertical_tail>
+                <area units="ft**2" is_input="False">1.7749320004776685<!--vertical tail area--></area>
+                <span units="ft" is_input="False">1.458396213013796<!--vertical tail span--></span>
+                <aspect_ratio is_input="True">1.2<!--aspect ratio of vertical tail--></aspect_ratio>
+                <taper_ratio is_input="True">0.62<!--taper ratio of vertical tail--></taper_ratio>
+                <sweep_0 units="deg" is_input="False">34.02277016960491<!--sweep angle at leading edge of vertical tail--></sweep_0>
+                <sweep_25 units="deg" is_input="True">38.0<!--sweep angle at 25% chord of vertical tail--></sweep_25>
+                <root>
+                    <chord units="ft" is_input="False">1.5004076265574031<!--chord length at root of vertical tail--></chord>
+                </root>
+                <MAC>
+                    <length units="ft" is_input="False">1.2376201838154974<!--mean aerodynamic chord length of vertical tail--></length>
+                    <z units="ft" is_input="False">0.6721826166977168<!--Z-position of mean aerodynamic chord of vertical tail--></z>
+                    <at25percent>
+                        <x>
+                            <from_wingMAC25 units="m" is_input="False">4.2947967322988125<!--distance along X between 25% MAC of wing and 25% MAC of vertical tail--></from_wingMAC25>
+                        </x>
+                    </at25percent>
+                </MAC>
+            </vertical_tail>
+            <propulsion>
+                <engine>
+                    <count is_input="True">2.0<!--number of engines--></count>
+                </engine>
+            </propulsion>
+        </geometry>
+        <aerodynamics>
+            <aircraft>
+                <cruise>
+                    <CD0 is_input="False">0.020994707503136752<!--profile drag coefficient for whole aircraft w.r.t. data:aerodynamics:aircraft:cruise:CL--></CD0>
+                </cruise>
+            </aircraft>
+            <cruise>
+                <neutral_point>
+                    <stick_fixed>
+                        <x is_input="False">0.521177997035137<!--distance between the leading edge of the wing at the MAC and the stick fixed aerodynamic center--></x>
+                    </stick_fixed>
+                </neutral_point>
+            </cruise>
+            <fuselage>
+            </fuselage>
+            <wing>
+                <airfoil>
+                    <CL_alpha units="1/rad" is_input="False">6.446621256426454<!--wing tail airfoil lift curve slope--></CL_alpha>
+                </airfoil>
+                <cruise>
+                    <induced_drag_coefficient is_input="False">0.0500619071641057<!--coefficient to multiply by the lift coefficient squared to get wing induced drag in cruise conditions--></induced_drag_coefficient>
+                </cruise>
+            </wing>
+            <horizontal_tail>
+                <efficiency is_input="False">1.0<!--ratio between the dynamic pressure at the tail and the free stream dynamic pressure--></efficiency>
+                <airfoil>
+                    <CL_alpha units="1/rad" is_input="False">6.33308507280742<!--horizontal tail airfoil lift curve slope--></CL_alpha>
+                </airfoil>
+            </horizontal_tail>
+            <vertical_tail>
+                <k_ar_effective is_input="False">1.8630169301489161<!--coefficient to multiply the vertical tail aspect ratio to get the effective aspect ratio which includes fuselage and horizontal tail end-plate effect--></k_ar_effective>
+                <airfoil>
+                    <CL_alpha units="1/rad" is_input="False">6.33308507280742<!--horizontal tail airfoil lift curve slope--></CL_alpha>
+                </airfoil>
+            </vertical_tail>
+        </aerodynamics>
+    </data>
+</FASTOAD_model>
+
