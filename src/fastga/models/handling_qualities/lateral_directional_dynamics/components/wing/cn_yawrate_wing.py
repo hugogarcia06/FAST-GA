@@ -27,7 +27,7 @@ class CnYawRateWing(FigureDigitization2):
         # Wing Geometry
         self.add_input("data:geometry:wing:aspect_ratio", val=np.nan)
         self.add_input("data:geometry:wing:taper_ratio", val=np.nan)
-        self.add_input("data:geometry:wing:MAC:length", val=np.nan)
+        self.add_input("data:geometry:wing:MAC:length", val=np.nan, units="m")
         self.add_input("data:geometry:wing:sweep_25", val=np.nan, units="rad")
 
         self.add_input("data:handling_qualities:stick_fixed_static_margin", val=np.nan)

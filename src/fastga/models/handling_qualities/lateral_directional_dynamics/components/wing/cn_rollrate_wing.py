@@ -44,8 +44,8 @@ class CnRollRateWing(FigureDigitization2):
         # Wing Aerodynamics
         self.add_input("data:aerodynamics:wing:airfoil:CL_alpha", val=np.nan, units="rad**-1")
 
-        self.add_input("data:aerodynamics:flaps:landing:CL_2D", val=np.nan)
-        self.add_input("data:aerodynamics:flaps:takeoff:CL_2D", val=np.nan)
+        self.add_input("data:aerodynamics:flaps:landing:CL", val=np.nan)
+        self.add_input("data:aerodynamics:flaps:takeoff:CL", val=np.nan)
 
         self.add_input("data:handling_qualities:lateral:derivatives:wing:Cl:rollrate", val=np.nan, units="rad**-1")
 
@@ -106,9 +106,9 @@ class CnRollRateWing(FigureDigitization2):
             delta_Cnp_flaps = self.get_delta_Cnp_flaps(A_W, taper_ratio_W, flaps_span_ratio)
             # Equation 10.66 from Roskam
             if (landing condition):
-                delta_cl = inputs["data:aerodynamics:flaps:landing:CL_2D"]
+                delta_cl = inputs["data:aerodynamics:flaps:landing:CL"]
             elif (takeoff condition):
-                delta_cl = inputs["data:aerodynamics:flaps:takeoff:CL_2D"]
+                delta_cl = inputs["data:aerodynamics:flaps:takeoff:CL"]
 
             slope_flaps = delta_cl / (cl_alpha_w * delta_flaps)
         else:

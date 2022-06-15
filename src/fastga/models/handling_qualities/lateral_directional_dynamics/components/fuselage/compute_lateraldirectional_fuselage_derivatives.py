@@ -26,8 +26,9 @@ class ComputeFuselageLateralDirectionalDerivatives(om.Group):
     """
 
     def setup(self):
+        # This is the method used in the aerodynamics module to compute the cn beta due to the body.
         self.add_subsystem(
-            "cn_beta_body", ComputeCnBetaFuselage(), promotes=["*"]
+            "cn_beta_body_previous", ComputeCnBetaFuselage(), promotes=["*"]
         )
 
         self.add_subsystem(

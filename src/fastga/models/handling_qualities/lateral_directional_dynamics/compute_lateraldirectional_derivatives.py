@@ -57,7 +57,8 @@ class ComputeLateralDirectionalDerivatives(om.Group):
 
     def setup(self):
         self.add_subsystem(
-            "components_lateraldirectional_derivatives", ComputeComponentsLateralDirectionalDerivatives(), promotes=["*"]
+            "components_lateraldirectional_derivatives", ComputeComponentsLateralDirectionalDerivatives(),
+            promotes=["*"]
         )
 
         self.add_subsystem(

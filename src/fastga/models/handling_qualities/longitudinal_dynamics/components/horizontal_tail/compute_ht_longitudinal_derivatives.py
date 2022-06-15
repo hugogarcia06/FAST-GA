@@ -26,14 +26,14 @@ from fastga.models.handling_qualities.longitudinal_dynamics.components.horizonta
 
 # TODO: Register Submodel
 class ComputeHTLongitudinalDerivatives(om.Group):
-    # TODOC
     """
-
+    Computes the longitudinal stability derivatives associated to the horizontal tail via the semi-empirical methods
+    found in the DATCOM.
     """
 
     def setup(self):
         self.add_subsystem(
-            "cL_alpha_ht", CLAlphaHT, promotes=["*"]
+            "cL_alpha_ht", CLAlphaHT(), promotes=["*"]
         )
         self.add_subsystem(
             "cL_alpharate_ht", CLAlphaRateHT(), promotes=["*"]

@@ -701,8 +701,8 @@ def test_Cn_rollrate_wing():
     # Wing Aerodynamics
     ivc.add_output("data:aerodynamics:wing:airfoil:CL_alpha", val=np.nan, units="rad**-1")
 
-    ivc.add_output("data:aerodynamics:flaps:landing:CL_2D", val=np.nan)
-    ivc.add_output("data:aerodynamics:flaps:takeoff:CL_2D", val=np.nan)
+    ivc.add_output("data:aerodynamics:flaps:landing:CL", val=np.nan)
+    ivc.add_output("data:aerodynamics:flaps:takeoff:CL", val=np.nan)
 
     # Run problem and check obtained value(s) is/(are) correct
     problem = run_system(CnRollRateWing(), ivc)
@@ -771,8 +771,8 @@ def test_Cl_yawrate_wing():
     ivc.add_output("data:geometry:wing:sweep_25", val=45, units="deg")
     ivc.add_output("data:geometry:flap:flap_location", val=np.nan)
 
-    ivc.add_output("data:aerodynamics:flaps:landing:CL_2D", val=np.nan)
-    ivc.add_output("data:aerodynamics:flaps:takeoff:CL_2D", val=np.nan)
+    ivc.add_output("data:aerodynamics:flaps:landing:CL", val=np.nan)
+    ivc.add_output("data:aerodynamics:flaps:takeoff:CL", val=np.nan)
 
     # Wing Aerodynamics
     ivc.add_output("data:aerodynamics:wing:airfoil:CL_alpha", val=np.nan, units="rad**-1")

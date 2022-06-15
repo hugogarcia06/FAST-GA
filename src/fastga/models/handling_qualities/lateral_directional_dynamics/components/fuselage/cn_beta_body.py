@@ -22,7 +22,7 @@ class CnBetaBody(FigureDigitization2):
     def setup(self):
         self.add_input("data:aerodynamics:fuselage:cruise:CnBeta", val=np.nan, units="rad**-1")
 
-        self.add_output("data:handling_qualities:lateral:derivatives:wing:Cn:beta", units="rad**-1")
+        self.add_output("data:handling_qualities:lateral:derivatives:fuselage:Cn:beta", units="rad**-1")
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
         # The fuselage contribution can be computed in two different ways: Roskam or Raymer
@@ -42,4 +42,4 @@ class CnBetaBody(FigureDigitization2):
         # modules
         Cn_beta_B = inputs["data:aerodynamics:fuselage:cruise:CnBeta"]
 
-        outputs["data:handling_qualities:lateral:derivatives:wing:Cn:beta"] = Cn_beta_B
+        outputs["data:handling_qualities:lateral:derivatives:fuselage:Cn:beta"] = Cn_beta_B

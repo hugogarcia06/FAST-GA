@@ -27,7 +27,7 @@ class AoADerivatives(om.ExplicitComponent):
 
     def setup(self):
         # Reference Flight Condition
-        self.add_input("data:reference_flight_condition:weight", val=np.nan, units="N")
+        self.add_input("data:reference_flight_condition:weight", val=np.nan, units="kg")
         self.add_input("data:reference_flight_condition:dynamic_pressure", val=np.nan, units="Pa")
 
         # Wing Geometry

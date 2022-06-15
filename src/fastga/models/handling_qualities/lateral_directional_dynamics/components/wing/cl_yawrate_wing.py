@@ -32,10 +32,10 @@ class ClYawRateWing(FigureDigitization2):
         self.add_input("data:geometry:wing:dihedral", val=np.nan, units="rad")
         self.add_input("data:geometry:wing:twist", val=np.nan, units="deg")
         self.add_input("data:geometry:wing:sweep_25", val=np.nan, units="rad")
-        self.add_input("data:geometry:flap:flap_location", val=np.nan)
+        # self.add_input("data:geometry:flap:flap_location", val=np.nan)
 
-        self.add_input("data:aerodynamics:flaps:landing:CL_2D", val=np.nan)
-        self.add_input("data:aerodynamics:flaps:takeoff:CL_2D", val=np.nan)
+        self.add_input("data:aerodynamics:flaps:landing:CL", val=np.nan)
+        self.add_input("data:aerodynamics:flaps:takeoff:CL", val=np.nan)
 
         # Wing Aerodynamics
         self.add_input("data:aerodynamics:wing:airfoil:CL_alpha", val=np.nan, units="rad**-1")
@@ -55,7 +55,7 @@ class ClYawRateWing(FigureDigitization2):
         dihedral_W = inputs["data:geometry:wing:dihedral"]
         twist_W = inputs["data:geometry:wing:twist"]
         sweep_25_W = inputs["data:geometry:wing:sweep_25"]
-        flap_location = inputs["data:geometry:flap:flap_location"]
+        # flap_location = inputs["data:geometry:flap:flap_location"]
 
         # Wing Aerodynamics
         cl_alpha_w = inputs["data:aerodynamics:wing:airfoil:CL_alpha"]
@@ -74,9 +74,9 @@ class ClYawRateWing(FigureDigitization2):
             # Equation 10.66 from Roskam
             delta_cl = np.nan
             if (landing condition):
-                delta_cl = inputs["data:aerodynamics:flaps:landing:CL_2D"]
+                delta_cl = inputs["data:aerodynamics:flaps:landing:CL"]
             elif (takeoff condition):
-                delta_cl = inputs["data:aerodynamics:flaps:takeoff:CL_2D"]
+                delta_cl = inputs["data:aerodynamics:flaps:takeoff:CL"]
             slope_flaps = delta_cl / (cl_alpha_w * delta_flaps)
         else:
             delta_flaps = 0.0

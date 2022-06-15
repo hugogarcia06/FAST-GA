@@ -26,7 +26,7 @@ class CmAlphaThrust(om.ExplicitComponent):
         self.add_input("data:geometry:propulsion:engine:count", val=np.nan, units="m")
 
 
-        self.add_output("data:handling_qualities:longitudinal:derivatives:thrust:Cm:speed", units="rad**-1")
+        self.add_output("data:handling_qualities:longitudinal:derivatives:thrust:Cm:alpha", units="rad**-1")
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
         c = inputs["data:geometry:wing:MAC:length"]
