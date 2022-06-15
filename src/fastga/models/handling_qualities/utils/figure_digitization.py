@@ -25,7 +25,7 @@ from pandas import read_csv
 
 from scipy import interpolate
 
-from fastga.models.handling_qualities import resources
+from fastga.models.handling_qualities import resources, digit_figures
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -48,7 +48,7 @@ class FigureDigitization2(om.ExplicitComponent):
 
         fineness_ratio = fus_length / fus_diameter
 
-        file = pth.join(resources.__path__[0], "4_2_1_1_20a.csv")
+        file = pth.join(digit_figures.__path__[0], "4_2_1_1_20a.csv")
         db = read_csv(file)
 
         x = db["X"]
@@ -77,7 +77,7 @@ class FigureDigitization2(om.ExplicitComponent):
 
         body_span_ratio = body_diameter / wing_span
 
-        file = pth.join(resources.__path__[0], "4_3_1_2_14.csv")
+        file = pth.join(digit_figures.__path__[0], "4_3_1_2_14.csv")
         db = read_csv(file)
 
         x = db["K_WB_X"]
@@ -106,7 +106,7 @@ class FigureDigitization2(om.ExplicitComponent):
 
         body_span_ratio = body_diameter / wing_span
 
-        file = pth.join(resources.__path__[0], "4_3_1_2_14.csv")
+        file = pth.join(digit_figures.__path__[0], "4_3_1_2_14.csv")
         db = read_csv(file)
 
         x = db["K_BW_X"]
@@ -137,7 +137,7 @@ class FigureDigitization2(om.ExplicitComponent):
         sweep_50 = sweep_50 * 180.0 / math.pi  # radians to degrees
 
         # ----- GRAPH FOR TAPER RATIO = 0.0  -----
-        file = pth.join(resources.__path__[0], "10_20_0.csv")
+        file = pth.join(digit_figures.__path__[0], "10_20_0.csv")
         db = read_csv(file)
 
         x_aspectratio1_graph_1 = db["ASPECT_RATIO_1_X"]
@@ -207,7 +207,7 @@ class FigureDigitization2(om.ExplicitComponent):
         )
 
         # ----- GRAPH FOR TAPER RATIO = 0.5 -----
-        file = pth.join(resources.__path__[0], "10_20_0_5.csv")
+        file = pth.join(digit_figures.__path__[0], "10_20_0_5.csv")
         db = read_csv(file)
 
         x_aspectratio1_graph_2 = db["ASPECT_RATIO_1_X"]
@@ -276,7 +276,7 @@ class FigureDigitization2(om.ExplicitComponent):
         )
 
         # ----- GRAPH FOR TAPER RATIO = 1.0 -----
-        file = pth.join(resources.__path__[0], "10_20_1.csv")
+        file = pth.join(digit_figures.__path__[0], "10_20_1.csv")
         db = read_csv(file)
 
         x_aspectratio1_graph_3 = db["ASPECT_RATIO_1_X"]
@@ -372,7 +372,7 @@ class FigureDigitization2(om.ExplicitComponent):
         ratio_aspect_ratio_sweep50 = aspect_ratio / math.cos(sweep_50)
         mach_sweep_50 = mach * math.cos(sweep_50)
 
-        file = pth.join(resources.__path__[0], "10_21.csv ")
+        file = pth.join(digit_figures.__path__[0], "10_21.csv ")
         db = read_csv(file)
 
         x_ratio_2 = db["RATIO_AR_SWEEP_2_X"]
@@ -476,7 +476,7 @@ class FigureDigitization2(om.ExplicitComponent):
         ratio_aspect_ratio_sweep50 = aspect_ratio / math.cos(sweep_50)
         ratio_fuselage_span = l_f / b
 
-        file = pth.join(resources.__path__[0], "10_22.csv")
+        file = pth.join(digit_figures.__path__[0], "10_22.csv")
         db = read_csv(file)
 
         x_ratio_4 = db["RATIO_FUSELAGE_SPAN_4_X"]
@@ -566,7 +566,7 @@ class FigureDigitization2(om.ExplicitComponent):
         :param taper_ratio: surface aspect ratio.
         """
 
-        file = pth.join(resources.__path__[0], "10_23.csv")
+        file = pth.join(digit_figures.__path__[0], "10_23.csv")
         db = read_csv(file)
 
         x_taperratio_0 = db["TAPER_RATIO_0_X"]
@@ -634,7 +634,7 @@ class FigureDigitization2(om.ExplicitComponent):
         sweep_50 = abs(sweep_50)
 
         # ----- GRAPH FOR TAPER RATIO = 0.0 -----
-        file = pth.join(resources.__path__[0], "10_24_0.csv")
+        file = pth.join(digit_figures.__path__[0], "10_24_0.csv")
         db = read_csv(file)
 
         x_sweep50_0_graph_1 = db["SWEEP_50_0_X"]
@@ -685,7 +685,7 @@ class FigureDigitization2(om.ExplicitComponent):
         )
 
         # ----- GRAPH FOR TAPER RATIO = 0.5 -----
-        file = pth.join(resources.__path__[0], "10_24_0_5.csv")
+        file = pth.join(digit_figures.__path__[0], "10_24_0_5.csv")
         db = read_csv(file)
 
         x_sweep50_0_graph_2 = db["SWEEP_50_0_X"]
@@ -735,7 +735,7 @@ class FigureDigitization2(om.ExplicitComponent):
         )
 
         # ----- GRAPH FOR TAPER RATIO = 1.0 -----
-        file = pth.join(resources.__path__[0], "10_24_1.csv")
+        file = pth.join(digit_figures.__path__[0], "10_24_1.csv")
         db = read_csv(file)
 
         x_sweep50_0_graph_3 = db["SWEEP_50_0_X"]
@@ -813,7 +813,7 @@ class FigureDigitization2(om.ExplicitComponent):
         ratio_aspect_ratio_sweep50 = aspect_ratio / math.cos(sweep_50)
         mach_sweep_50 = mach * math.cos(sweep_50)
 
-        file = pth.join(resources.__path__[0], "10_25.csv")
+        file = pth.join(digit_figures.__path__[0], "10_25.csv")
         db = read_csv(file)
 
         x_ratio_2 = db["RATIO_AR_SWEEP_2_X"]
@@ -895,7 +895,7 @@ class FigureDigitization2(om.ExplicitComponent):
         :param taper_ratio: surface taper ratio.
         """
 
-        file = pth.join(resources.__path__[0], "10_26.csv")
+        file = pth.join(digit_figures.__path__[0], "10_26.csv")
         db = read_csv(file)
 
         x_taperratio_0 = db["TAPER_RATIO_0_X"]
@@ -965,7 +965,7 @@ class FigureDigitization2(om.ExplicitComponent):
         delta_beta = math.atan(math.tan(sweep_25) / beta)
 
         # ----- GRAPH 1 -----
-        file = pth.join(resources.__path__[0], "10_35_0.csv")
+        file = pth.join(digit_figures.__path__[0], "10_35_0.csv")
         db = read_csv(file)
 
         x_quotient_1_5_graph_1 = db["BETA_A_K_1.5_X"]
@@ -1044,7 +1044,7 @@ class FigureDigitization2(om.ExplicitComponent):
         )
 
         # ----- GRAPH 2 -----
-        file = pth.join(resources.__path__[0], "10_35_0_25.csv")
+        file = pth.join(digit_figures.__path__[0], "10_35_0_25.csv")
         db = read_csv(file)
 
         x_quotient_1_5_graph_2 = db["BETA_A_K_1.5_X"]
@@ -1124,7 +1124,7 @@ class FigureDigitization2(om.ExplicitComponent):
         )
 
         # ----- GRAPH 3 -----
-        file = pth.join(resources.__path__[0], "10_35_0_5.csv")
+        file = pth.join(digit_figures.__path__[0], "10_35_0_5.csv")
         db = read_csv(file)
 
         x_quotient_1_5_graph_3 = db["BETA_A_K_1.5_X"]
@@ -1203,7 +1203,7 @@ class FigureDigitization2(om.ExplicitComponent):
         )
 
         # ----- GRAPH 4 -----
-        file = pth.join(resources.__path__[0], "10_35_1.csv")
+        file = pth.join(digit_figures.__path__[0], "10_35_1.csv")
         db = read_csv(file)
 
         x_quotient_1_5_graph_4 = db["BETA_A_K_1.5_X"]
@@ -1309,7 +1309,7 @@ class FigureDigitization2(om.ExplicitComponent):
 
         sweep_25 = sweep_25 * 180.0 / math.pi  # radians to degrees
 
-        file = pth.join(resources.__path__[0], "10_36.csv")
+        file = pth.join(digit_figures.__path__[0], "10_36.csv")
         db = read_csv(file)
 
         x_sweep_10 = db["SWEEP_25_10_X"]
@@ -1388,7 +1388,7 @@ class FigureDigitization2(om.ExplicitComponent):
         :param taper_ratio: surface taper ratio
         """
 
-        file = pth.join(resources.__path__[0], "10_37.csv")
+        file = pth.join(digit_figures.__path__[0], "10_37.csv")
         db = read_csv(file)
 
         x_taperratio_0 = db["TAPER_RATIO_0_X"]
@@ -1478,7 +1478,7 @@ class FigureDigitization2(om.ExplicitComponent):
         """
 
         # ----- GRAPH 1. SPAN RATIO = 0.4 -----
-        file = pth.join(resources.__path__[0], "10_38_0_4.csv")
+        file = pth.join(digit_figures.__path__[0], "10_38_0_4.csv")
         db = read_csv(file)
 
         x_taperratio_0_graph_1 = db["TAPER_RATIO_0_X"]
@@ -1551,7 +1551,7 @@ class FigureDigitization2(om.ExplicitComponent):
         )
 
         # ----- GRAPH 2. SPAN RATIO = 0.6 -----
-        file = pth.join(resources.__path__[0], "10_38_0_6.csv")
+        file = pth.join(digit_figures.__path__[0], "10_38_0_6.csv")
         db = read_csv(file)
 
         x_taperratio_0_graph_2 = db["TAPER_RATIO_0_X"]
@@ -1625,7 +1625,7 @@ class FigureDigitization2(om.ExplicitComponent):
         )
 
         # ----- GRAPH 3. SPAN RATIO = 0.8 -----
-        file = pth.join(resources.__path__[0], "10_38_0_8.csv")
+        file = pth.join(digit_figures.__path__[0], "10_38_0_8.csv")
         db = read_csv(file)
 
         x_taperratio_0_graph_3 = db["TAPER_RATIO_0_X"]
@@ -1722,7 +1722,7 @@ class FigureDigitization2(om.ExplicitComponent):
         :param aspect_ratio: lifting surface aspect ratio.
         """
 
-        file = pth.join(resources.__path__[0], "10_40.csv")
+        file = pth.join(digit_figures.__path__[0], "10_40.csv")
         db = read_csv(file)
 
         x = db["X"]
@@ -1753,7 +1753,7 @@ class FigureDigitization2(om.ExplicitComponent):
         sweep_25 = sweep_25 * 180.0 / math.pi  # radians to degrees
 
         # Reading data from the first part (a) relative to the wing taper ratio
-        file = pth.join(resources.__path__[0], "10_41a.csv")
+        file = pth.join(digit_figures.__path__[0], "10_41a.csv")
         db = read_csv(file)
 
         x_0 = db["TAPER_RATIO_0_X"]
@@ -1821,7 +1821,7 @@ class FigureDigitization2(om.ExplicitComponent):
         )
 
         # Reading the second part of the figure (b) relative to the different wing sweep angles.
-        file = pth.join(resources.__path__[0], "10_41b.csv")
+        file = pth.join(digit_figures.__path__[0], "10_41b.csv")
         db = read_csv(file)
 
         x_sw_0 = db["SWEEP_25_0_X"]
@@ -1910,7 +1910,7 @@ class FigureDigitization2(om.ExplicitComponent):
         :param taper_ratio: wing taper ratio
         """
 
-        file = pth.join(resources.__path__[0], "10_42.csv")
+        file = pth.join(digit_figures.__path__[0], "10_42.csv")
         db = read_csv(file)
 
         x_0 = db["TAPER_RATIO_0_X"]
@@ -1974,7 +1974,7 @@ class FigureDigitization2(om.ExplicitComponent):
         """
 
         # Reading data from the first part (a) relative to the wing taper ratio
-        file = pth.join(resources.__path__[0], "10_43a.csv")
+        file = pth.join(digit_figures.__path__[0], "10_43a.csv")
         db = read_csv(file)
 
         x_0 = db["TAPER_RATIO_0_X"]
@@ -2025,7 +2025,7 @@ class FigureDigitization2(om.ExplicitComponent):
         )
 
         # Reading the second part of the figure (b) relative to the different wing sweep angles.
-        file = pth.join(resources.__path__[0], "10_43b.csv")
+        file = pth.join(digit_figures.__path__[0], "10_43b.csv")
         db = read_csv(file)
 
         x_ar_1 = db["ASPECT_RATIO_1_X"]
@@ -2131,7 +2131,7 @@ class FigureDigitization2(om.ExplicitComponent):
 
         ###### GRAPH FOR x/c = 0.0 ######
         # Reading data from the first part (a) relative to the wing sweep angle
-        file = pth.join(resources.__path__[0], "10_44_0a.csv")
+        file = pth.join(digit_figures.__path__[0], "10_44_0a.csv")
         db = read_csv(file)
 
         x_0 = db["SWEEP_25_0_X"]
@@ -2191,7 +2191,7 @@ class FigureDigitization2(om.ExplicitComponent):
         )
 
         # Reading the second part of the figure (b) relative to the different taper ratio.
-        file = pth.join(resources.__path__[0], "10_44_0b.csv")
+        file = pth.join(digit_figures.__path__[0], "10_44_0b.csv")
         db = read_csv(file)
 
         x_taper_0 = db["TAPER_RATIO_0_X"]
@@ -2233,7 +2233,7 @@ class FigureDigitization2(om.ExplicitComponent):
 
         ###### GRAPH FOR x/c = 0.2 ######
         # Reading data from the first part (a) relative to the wing sweep angle
-        file = pth.join(resources.__path__[0], "10_44_0_2a.csv")
+        file = pth.join(digit_figures.__path__[0], "10_44_0_2a.csv")
         db = read_csv(file)
 
         x_0 = db["SWEEP_25_0_X"]
@@ -2293,7 +2293,7 @@ class FigureDigitization2(om.ExplicitComponent):
         )
 
         # Reading the second part of the figure (b) relative to the different taper ratio.
-        file = pth.join(resources.__path__[0], "10_44_0_2b.csv")
+        file = pth.join(digit_figures.__path__[0], "10_44_0_2b.csv")
         db = read_csv(file)
 
         x_taper_0 = db["TAPER_RATIO_0_X"]
@@ -2335,7 +2335,7 @@ class FigureDigitization2(om.ExplicitComponent):
 
         ###### GRAPH FOR x/c = 0.4 ######
         # Reading data from the first part (a) relative to the wing sweep angle
-        file = pth.join(resources.__path__[0], "10_44_0_4a.csv")
+        file = pth.join(digit_figures.__path__[0], "10_44_0_4a.csv")
         db = read_csv(file)
 
         x_0 = db["SWEEP_25_0_X"]
@@ -2395,7 +2395,7 @@ class FigureDigitization2(om.ExplicitComponent):
         )
 
         # Reading the second part of the figure (b) relative to the different taper ratio.
-        file = pth.join(resources.__path__[0], "10_44_0_4b.csv")
+        file = pth.join(digit_figures.__path__[0], "10_44_0_4b.csv")
         db = read_csv(file)
 
         x_taper_0 = db["TAPER_RATIO_0_X"]
@@ -2472,7 +2472,7 @@ class FigureDigitization2(om.ExplicitComponent):
         sweep_25 = sweep_25 * 180.0 / math.pi  # radians to degrees
 
         # ----- GRAPH 1. DATA FOR RATIO X_C = 0.0 -----
-        file = pth.join(resources.__path__[0], "10_45_0.csv")
+        file = pth.join(digit_figures.__path__[0], "10_45_0.csv")
         db = read_csv(file)
 
         x_sweep_0_graph_1 = db["SWEEP_25_0_X"]
@@ -2530,7 +2530,7 @@ class FigureDigitization2(om.ExplicitComponent):
         )
 
         # ----- GRAPH 2. DATA FOR RATIO X_C = 0.2 -----
-        file = pth.join(resources.__path__[0], "10_45_0_2.csv")
+        file = pth.join(digit_figures.__path__[0], "10_45_0_2.csv")
         db = read_csv(file)
 
         x_sweep_0_graph_2 = db["SWEEP_25_0_X"]
@@ -2589,7 +2589,7 @@ class FigureDigitization2(om.ExplicitComponent):
         )
 
         # ----- GRAPH 3. DATA FOR RATIO X_C = 0.4 -----
-        file = pth.join(resources.__path__[0], "10_45_0_4.csv")
+        file = pth.join(digit_figures.__path__[0], "10_45_0_4.csv")
         db = read_csv(file)
 
         x_sweep_0_graph_3 = db["SWEEP_25_0_X"]
