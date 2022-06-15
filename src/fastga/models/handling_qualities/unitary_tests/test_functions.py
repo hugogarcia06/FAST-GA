@@ -26,6 +26,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from fastga.models.handling_qualities.external.openvsp.compute_stab import ComputeSTABopenvsp
+from fastga.models.handling_qualities.stability_derivatives import StabilityDerivatives
 from tests.testing_utilities import run_system, get_indep_var_comp, list_inputs
 from tests.xfoil_exe.get_xfoil import get_xfoil_path
 
@@ -252,5 +253,91 @@ def comp_stab_coef(
     assert problem["data:handling_qualities:lateral:derivatives:Cn:yawrate"] == pytest.approx(
         cn_r, abs=1e-4
     )
+
+
+def stability_group(
+    add_fuselage: bool,
+    use_openvsp: bool,
+    XML_FILE: str,
+    ):
+    """Compute stability coefficients for the whole aircraft using OpenVSP or semi-empirical methods"""
+    # Create result temporary directory
+    results_folder = _create_tmp_directory()
+
+    # Transfer saved polar results to temporary folder
+    tmp_folder = polar_result_transfer()
+
+    # Research independent input value in .xml file
+    # noinspection PyTypeChecker
+    ivc = get_indep_var_comp(
+        list_inputs(StabilityDerivatives(
+            result_folder_path=results_folder.name,
+            add_fuselage=add_fuselage,
+            use_openvsp=use_openvsp
+        )), __file__, XML_FILE
+    )
+
+    # Run problem twice
+    start = time.time()
+    # noinspection PyTypeChecker
+    problem = run_system(
+        StabilityDerivatives(
+            result_folder_path=results_folder.name,
+            add_fuselage=add_fuselage,
+            use_openvsp=use_openvsp
+        ),
+        ivc,
+    )
+
+    stop = time.time()
+    duration_1st_run = stop - start
+    start = time.time()
+    # noinspection PyTypeChecker
+    run_system(
+        StabilityDerivatives(
+            result_folder_path=results_folder.name,
+            add_fuselage=add_fuselage,
+            use_openvsp=use_openvsp
+        ),
+        ivc,
+    )
+    stop = time.time()
+
+    CL_alpha = problem.get_val("data:handling_qualities:longitudinal:derivatives:CL:alpha", units="rad**-1")
+    CD_alpha = problem.get_val("data:handling_qualities:longitudinal:derivatives:CD:alpha", units="rad**-1")
+    Cm_alpha = problem.get_val("data:handling_qualities:longitudinal:derivatives:Cm:alpha", units="rad**-1")
+    CL_speed = problem.get_val("data:handling_qualities:longitudinal:derivatives:CL:speed", units="rad**-1")
+    CD_speed = problem.get_val("data:handling_qualities:longitudinal:derivatives:CD:speed", units="rad**-1")
+    Cm_speed = problem.get_val("data:handling_qualities:longitudinal:derivatives:Cm:speed", units="rad**-1")
+    CL_pitchrate = problem.get_val("data:handling_qualities:longitudinal:derivatives:CL:pitchrate", units="rad**-1")
+    CD_pitchrate = problem.get_val("data:handling_qualities:longitudinal:derivatives:CD:pitchrate", units="rad**-1")
+    Cm_pitchrate = problem.get_val("data:handling_qualities:longitudinal:derivatives:Cm:pitchrate", units="rad**-1")
+
+    CY_beta = problem.get_val("data:handling_qualities:lateral:derivatives:CY:beta", units="rad**-1")
+    Cl_beta = problem.get_val("data:handling_qualities:lateral:derivatives:Cl:beta", units="rad**-1")
+    Cn_beta = problem.get_val("data:handling_qualities:lateral:derivatives:Cn:beta", units="rad**-1")
+    CY_rollrate = problem.get_val("data:handling_qualities:lateral:derivatives:CY:rollrate", units="rad**-1")
+    Cl_rollrate = problem.get_val("data:handling_qualities:lateral:derivatives:Cl:rollrate", units="rad**-1")
+    Cn_rollrate = problem.get_val("data:handling_qualities:lateral:derivatives:Cn:rollrate", units="rad**-1")
+    CY_yawrate = problem.get_val("data:handling_qualities:lateral:derivatives:CY:yawrate", units="rad**-1")
+    Cl_yawrate = problem.get_val("data:handling_qualities:lateral:derivatives:Cl:yawrate", units="rad**-1")
+    Cn_yawrate = problem.get_val("data:handling_qualities:lateral:derivatives:Cn:yawrate", units="rad**-1")
+
+    # Write the results in a file
+
+
+    duration_2nd_run = stop - start
+
+    # Retrieve polar results from temporary folder
+    polar_result_retrieve(tmp_folder)
+
+    # Remove existing result files
+    results_folder.cleanup()
+
+    # Check obtained value(s) is/(are) correct
+    assert (duration_2nd_run / duration_1st_run) <= 0.1
+
+    # Return problem for complementary values check
+    return problem
 
 

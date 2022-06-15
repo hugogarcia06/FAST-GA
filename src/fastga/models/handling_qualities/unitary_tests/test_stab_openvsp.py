@@ -12,10 +12,9 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import pytest
-import numpy as np
 import os.path as pth
 
-from fastga.models.handling_qualities.unitary_tests.test_functions import comp_stab_coef
+from fastga.models.handling_qualities.unitary_tests.test_functions import comp_stab_coef, stability_group
 from fastga.models.handling_qualities.external.openvsp.openvsp import OPENVSPSimpleGeometry
 from fastga.models.handling_qualities.unitary_tests import data
 
@@ -32,7 +31,7 @@ def test_openvsp_comp_stab_coef():
     - Mach = 0.2
     """
 
-    add_fuselage = True
+    add_fuselage = False
 
     # Check values
     cL_u = 0.0104104
@@ -76,6 +75,22 @@ def test_openvsp_comp_stab_coef():
         cl_r,
         cn_r,
     )
+
+
+def test_stability_group():
+    """
+    Test whether the different stability computation components are well grouped.
+    """
+    add_fuselage = False
+    use_openvsp = False
+
+    stability_group(
+        add_fuselage,
+        use_openvsp,
+        XML_FILE,
+    )
+
+
 
 
 def test_read_Stab_file():
