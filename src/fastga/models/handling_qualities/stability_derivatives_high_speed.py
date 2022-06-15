@@ -35,6 +35,8 @@ class StabilityDerivativesHighSpeed(Group):
         self.options.declare("wing_airfoil", default="naca23012.af", types=str, allow_none=True)
         self.options.declare("htp_airfoil", default="naca0012.af", types=str, allow_none=True)
         self.options.declare("vtp_airfoil", default="naca0012.af", types=str, allow_none=True)
+        self.options.declare("add_fuselage", default=False, types=bool, allow_none=False)
+
 
     def setup(self):
         if self.options["use_openvsp"]:
@@ -47,6 +49,7 @@ class StabilityDerivativesHighSpeed(Group):
                     wing_airfoil_file=self.options["wing_airfoil"],
                     htp_airfoil_file=self.options["htp_airfoil"],
                     vtp_airfoil_file=self.options["vtp_airfoil"],
+                    add_fuselage=self.options["add_fuselage"]
                 ),
                 promotes=["*"],
             )
@@ -54,12 +57,13 @@ class StabilityDerivativesHighSpeed(Group):
         else:
             # Use of semi-empirical expressions from DATCOM for stability calculation
             self.add_subsystem(
-                "compute_lateral-directional_derivatives",
-                ComputeLateralDirectionalDerivatives(),
-                promotes=["*"],
-            )
-            self.add_subsystem(
                 "compute_longitudinal_derivatives",
                 ComputeLongitudinalDerivatives(),
                 promotes=["*"],
             )
+            self.add_subsystem(
+                "compute_lateraldirectional_derivatives",
+                ComputeLateralDirectionalDerivatives(),
+                promotes=["*"],
+            )
+

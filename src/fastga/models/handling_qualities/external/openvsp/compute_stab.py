@@ -41,7 +41,7 @@ class ComputeSTABopenvsp(Group):
             "vtp_airfoil_file", default=DEFAULT_VTP_AIRFOIL, types=str, allow_none=True
         )
         self.options.declare(
-            "add_fuselage", default=False, types=bool, allow_none=True
+            "add_fuselage", default=False, types=bool, allow_none=False
         )
 
     def setup(self):
