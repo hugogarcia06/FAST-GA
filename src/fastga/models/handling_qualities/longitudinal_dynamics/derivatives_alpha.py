@@ -29,10 +29,15 @@ class AoADerivatives(om.ExplicitComponent):
         # Reference Flight Condition
         self.add_input("data:reference_flight_condition:weight", val=np.nan, units="kg")
         self.add_input("data:reference_flight_condition:dynamic_pressure", val=np.nan, units="Pa")
+        self.add_input("data:reference_flight_condition:CG:x", val=np.nan, units="m")
+
+        self.add_input("data:aerodynamics:cruise:neutral_point:stick_fixed:x", val=np.nan)
 
         # Wing Geometry
         self.add_input("data:geometry:wing:area", val=np.nan, units="m**2")
         self.add_input("data:geometry:wing:aspect_ratio", val=np.nan)
+        self.add_input("data:geometry:wing:MAC:length", val=np.nan, units="m")
+        self.add_input("data:geometry:wing:MAC:at25percent:x", val=np.nan, units="m")
 
         # Wing Aerodynamics
         self.add_input("data:aerodynamics:wing:cruise:induced_drag_coefficient", val=np.nan)
@@ -41,8 +46,6 @@ class AoADerivatives(om.ExplicitComponent):
         self.add_input("data:aerodynamics:horizontal_tail:efficiency", val=np.nan,)
 
         self.add_input("data:handling_qualities:stick_fixed_static_margin", val=np.nan)
-        # self.add_input(cg_position)
-        # self.add_input(ac_position)
 
         self.add_input(
             "data:handling_qualities:longitudinal:derivatives:wing:CL:alpha", val=np.nan, units="rad**-1")
@@ -64,7 +67,14 @@ class AoADerivatives(om.ExplicitComponent):
         S_W = inputs["data:geometry:wing:area"]
         A_W = inputs["data:geometry:wing:aspect_ratio"]
 
-        static_margin = inputs["data:handling_qualities:stick_fixed_static_margin"]
+        mac_length = inputs["data:geometry:wing:MAC:length"]
+        aero_center = inputs["data:aerodynamics:cruise:neutral_point:stick_fixed:x"]
+        cg_x = inputs["data:reference_flight_condition:CG:x"]
+        mac_leading_edge_x = inputs["data:geometry:wing:MAC:at25percent:x"] - 0.25 * mac_length
+        cg_x_local = cg_x - mac_leading_edge_x
+        static_margin = aero_center - cg_x_local / mac_length
+
+        # static_margin = inputs["data:handling_qualities:stick_fixed_static_margin"]
 
         # Aerodynamics
         k = inputs["data:aerodynamics:wing:cruise:induced_drag_coefficient"]
