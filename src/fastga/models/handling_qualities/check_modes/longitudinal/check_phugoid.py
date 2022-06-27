@@ -22,46 +22,61 @@ class CheckPhugoid(om.ExplicitComponent):
     # TODOC:
     """
     def setup(self):
-        self.add_input("data:handling_qualities:longitudinal:modes:phugoid:damping_ratio", val=np.nan)
-        self.add_input("data:handling_qualities:longitudinal:modes:phugoid:undamped_frequency", val=np.nan, units="rad/s")
+        self.add_input("data:handling_qualities:longitudinal:modes:phugoid:real_part", val=np.nan, units="s**-1")
+        self.add_input("data:handling_qualities:longitudinal:modes:phugoid:imag_part", val=np.nan, units="s**-1")
 
         self.add_output("data:handling_qualities:longitudinal:modes:phugoid:check:damping_ratio:satisfaction_level")
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
-        z_ph = inputs["data:handling_qualities:longitudinal:modes:phugoid:damping_ratio"]
-        wn_ph = inputs["data:handling_qualities:longitudinal:modes:phugoid:undamped_frequency"]
 
-        real_ph = - z_ph * wn_ph
-        imag_ph = wn_ph * math.sqrt(1 - z_ph**2)
+        real_ph = inputs["data:handling_qualities:longitudinal:modes:phugoid:real_part"]
+        imag_ph = inputs["data:handling_qualities:longitudinal:modes:phugoid:imag_part"]
+
+        wn_ph = math.sqrt(real_ph**2 + imag_ph**2)
+        z_ph = - real_ph / math.sqrt(real_ph**2 + imag_ph**2)
 
         ### PHUGOID REQUIREMENTS ###
         # Level 1
         z_ph_req_1 = 0.04
-        phi_req_1 = math.asin(z_ph_req_1)
-        phi_req_1 = math.pi/2 - phi_req_1
-
-        x1 = np.linspace(-1, 1, 100)
-        y1 = math.tan(-phi_req_1) * x1
 
         # Level 2
         z_ph_req_2 = 0.0
-        y2 = np.linspace(-1, 1, 100)
-        x2 = 0.0 * y2
 
         # Level 3
         t_2_ph_3 = 55
         n_req_3 = math.log(2) / t_2_ph_3
-        y3 = np.linspace(-1, 1, 100)
-        x3 = np.ones(100) * n_req_3
 
         ### CHECK ###
         check_phugoid_damping = 0.0
-        if z_ph <= z_ph_req_1:
+        if z_ph >= z_ph_req_1:
             check_phugoid_damping = 1.0
-        elif z_ph_req_1 <= z_ph <= z_ph_req_2:
+        elif z_ph_req_2 <= z_ph < z_ph_req_1:
             check_phugoid_damping = 2.0
-        elif z_ph_req_2 <= real_ph <= n_req_3:
+        elif real_ph <= n_req_3:
             check_phugoid_damping = 3.0
+
+        ### PLOT ###
+        self.plot_s_plane(real_ph, imag_ph, z_ph_req_1, z_ph_req_2, n_req_3)
+
+        outputs["data:handling_qualities:longitudinal:modes:phugoid:check:damping_ratio:satisfaction_level"] = check_phugoid_damping
+
+
+    @staticmethod
+    def plot_s_plane(real_ph, imag_ph, z_ph_req_1, z_ph_req_2, n_req_3):
+
+        def get_damping_limits(damping_ratio):
+            phi = math.asin(damping_ratio)
+            phi = math.pi / 2 - phi
+            x = np.linspace(-100, 100, 100)
+            y = math.tan(-phi) * x
+
+            return x, y
+
+        def get_vertical_limits(z_wn_product):
+            x = -z_wn_product * np.ones(1000)
+            y = np.linspace(-100, 100, 1000)
+
+            return x, y
 
         ### PLOT ###
         fig, ax = plt.subplots()
@@ -69,19 +84,22 @@ class CheckPhugoid(om.ExplicitComponent):
         ax.set_xlabel(r"$n$")
         ax.set_ylabel(r"$jw$")
         ax.grid(visible=True, which="both")
-        ax.scatter(real_ph, imag_ph, label=r"$\lambda_{ph}$")
         # x-axis
         ax.plot(np.linspace(-10, 10, 1000), 0.0*np.linspace(-10, 10, 1000), color="black")
         # y-axis
         ax.plot(0.0*np.linspace(-10, 10, 1000), np.linspace(-10, 10, 1000), color="black")
 
-        ax.plot(x1, y1, linestyle="--", color="red", label="Level 1")
-        ax.plot(x2, y2, linestyle="--", color="orange", label="Level 2")
-        ax.plot(x3, y3, linestyle="--", color="yellow", label="Level 3")
+        ax.scatter(real_ph, imag_ph, label=r"$\lambda_{ph}$")
+
+        # Damping ratio limits
+        x_1, y_1 = get_damping_limits(z_ph_req_1)
+        ax.plot(x_1, y_1, linestyle="--", color="red", label="Level 1")
+        x_2, y_2 = get_damping_limits(z_ph_req_2)
+        ax.plot(x_2, y_2, linestyle="--", color="orange", label="Level 2")
+        x_3, y_3 = get_vertical_limits(-n_req_3)
+        ax.plot(x_3, y_3, linestyle="--", color="yellow", label="Level 3")
+
         ax.legend(loc="upper right")
         ax.set_xbound(real_ph*4, n_req_3 * 4/3)
         ax.set_ybound(-imag_ph, imag_ph*4)
         plt.show()
-
-        # TODO: what output? plot in a file? bool that say if requirements are satisfied?
-        outputs["data:handling_qualities:longitudinal:modes:phugoid:check:damping_ratio:satisfaction_level"] = check_phugoid_damping

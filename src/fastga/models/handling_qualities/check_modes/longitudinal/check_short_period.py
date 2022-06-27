@@ -20,7 +20,7 @@ import openmdao.api as om
 import numpy as np
 import matplotlib.pyplot as plt
 
-from fastga.models.handling_qualities import digit_figures
+from fastga.models.handling_qualities.resources import digit_figures
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -36,21 +36,23 @@ class CheckShortPeriod(om.ExplicitComponent):
         self.add_input("data:geometry:wing:area", val=np.nan, units="m**2")
         self.add_input("data:reference_flight_condition:weight", val=np.nan, units="kg")
 
-        self.add_input("data:handling_qualities:longitudinal:modes:short_period:damping_ratio", val=np.nan)
-        self.add_input("data:handling_qualities:longitudinal:modes:short_period:undamped_frequency", val=np.nan,
-                       units="rad/s")
-        self.add_input("data:reference_flight_condition:flight_phase_category", val=np.nan, units="rad/s")
+        self.add_input("data:handling_qualities:longitudinal:modes:short_period:real_part", val=np.nan, units="s**-1")
+        self.add_input("data:handling_qualities:longitudinal:modes:short_period:imag_part", val=np.nan,
+                       units="s**-1")
+        self.add_input("data:reference_flight_condition:flight_phase_category", val=np.nan)
 
         self.add_output(
             "data:handling_qualities:longitudinal:modes:short_period:check:damping_ratio:satisfaction_level")
+        self.add_output(
+            "data:handling_qualities:longitudinal:modes:short_period:check:undamped_frequency:satisfaction_level")
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
 
-        z_sp = inputs["data:handling_qualities:longitudinal:modes:short_period:damping_ratio"]
-        wn_sp = inputs["data:handling_qualities:longitudinal:modes:short_period:undamped_frequency"]
+        real_sp = inputs["data:handling_qualities:longitudinal:modes:short_period:real_part"]
+        imag_sp = inputs["data:handling_qualities:longitudinal:modes:short_period:imag_part"]
 
-        real_sp = - z_sp * wn_sp
-        imag_sp = wn_sp * math.sqrt(1 - z_sp ** 2)
+        wn_sp = math.sqrt(real_sp ** 2 + imag_sp ** 2)
+        z_sp = - real_sp / math.sqrt(real_sp ** 2 + imag_sp ** 2)
 
         flight_phase_category = inputs["data:reference_flight_condition:flight_phase_category"]
         q = inputs["data:reference_flight_condition:dynamic_pressure"]
@@ -62,34 +64,9 @@ class CheckShortPeriod(om.ExplicitComponent):
         ### SHORT PERIOD REQUIREMENTS ###
         z_sp_reqs, wn_sp_reqs = self.get_short_period_requirements(flight_phase_category, n_alpha)
 
-        z_sp_min_req_1 = z_sp_reqs[0]
-        z_sp_max_req_1 = z_sp_reqs[1]
-        z_sp_min_req_2 = z_sp_reqs[2]
-        z_sp_max_req_2 = z_sp_reqs[3]
-        z_sp_min_req_3 = z_sp_reqs[4]
-
-        wn_sp_min_req_1 = wn_sp_reqs[0]
-        wn_sp_max_req_1 = wn_sp_reqs[1]
-        wn_sp_min_req_2 = wn_sp_reqs[2]
-        wn_sp_max_req_2 = wn_sp_reqs[3]
-        wn_sp_min_req_3 = wn_sp_reqs[4]
-
         ### CHECK ###
-        check_shortperiod_damping = 0.0
-        if z_sp_min_req_1 <= z_sp <= z_sp_max_req_1:
-            check_shortperiod_damping = 1.0
-        elif z_sp_min_req_2 <= z_sp <= z_sp_max_req_2:
-            check_shortperiod_damping = 2.0
-        elif z_sp_min_req_3 <= z_sp:
-            check_shortperiod_damping = 3.0
-
-        check_shortperiod_frequency = 0.0
-        if wn_sp_min_req_1 <= wn_sp <= wn_sp_max_req_1:
-            check_shortperiod_damping = 1.0
-        elif wn_sp_min_req_2 <= wn_sp <= wn_sp_max_req_2:
-            check_shortperiod_damping = 2.0
-        elif wn_sp_min_req_3 <= wn_sp:
-            check_shortperiod_damping = 3.0
+        check_shortperiod_damping, check_shortperiod_frequency = self.check_short_period_requirements(
+            z_sp, wn_sp, z_sp_reqs, wn_sp_reqs)
 
         ### PLOT ###
         ### Frequency vs. n/alpha plot ###
@@ -128,7 +105,7 @@ class CheckShortPeriod(om.ExplicitComponent):
         ax1.set_xlabel(r"$n / \alpha$")
         ax1.set_ylabel("$w_n (rad/s)$")
         ax1.grid(True, which="both")
-        # TODO
+
         ax1.scatter(n_alpha, wn_sp, label=r"$w_{n_{sp}}$")
         ax1.plot(level1_up_x, level1_up_y, linestyle="--", color="red", label="Level 1")
         ax1.plot(level1_down_x, level1_down_y, linestyle="--", color="red", label="")
@@ -137,60 +114,10 @@ class CheckShortPeriod(om.ExplicitComponent):
         ax1.legend(loc="upper right")
         ax1.set_xbound(1.0, 100)
         ax1.set_ybound(0.1, 100.0)
-        plt.show()
+        # plt.show()
 
         ### s-plane plot ###
-        fig2, ax2 = plt.subplots()
-        ax2.set_title("Check of Short Period Characteristics Versus Flying Quality Requirements")
-        ax2.set_xlabel(r"$n$")
-        ax2.set_ylabel(r"$jw$")
-        ax2.grid(True, which="both")
-        # x-axis
-        ax2.plot(np.linspace(-1000, 1000, 1000), 0.0 * np.linspace(-1000, 1000, 1000), color="black")
-        # y-axis
-        ax2.plot(0.0 * np.linspace(-1000, 1000, 1000), np.linspace(-1000, 1000, 1000), color="black")
-
-        ax2.scatter(real_sp, imag_sp, label=r"$\lambda_{sp}$")
-
-        # Damping ratio limits
-        # Level 1
-        phi_damp_min_req_1 = math.asin(z_sp_min_req_1)
-        phi_damp_min_req_1 = math.pi / 2 - phi_damp_min_req_1
-        x_damp_min_1 = np.linspace(-1000, 100, 100)
-        y_damp_min_1 = math.tan(-phi_damp_min_req_1) * x_damp_min_1
-        # Level 2
-        phi_damp_min_req_2 = math.asin(z_sp_min_req_2)
-        phi_damp_min_req_2 = math.pi / 2 - phi_damp_min_req_2
-        x_damp_min_2 = np.linspace(-1000, 100, 100)
-        y_damp_min_2 = math.tan(-phi_damp_min_req_2) * x_damp_min_2
-        # Level 3
-        phi_damp_min_req_3 = math.asin(z_sp_min_req_3)
-        phi_damp_min_req_3 = math.pi / 2 - phi_damp_min_req_3
-        x_damp_min_3 = np.linspace(-1000, 100, 100)
-        y_damp_min_3 = math.tan(-phi_damp_min_req_3) * x_damp_min_3
-
-        # Frequency limits
-        # Level 1
-        x_freq_min_1, y_freq_min_1 = self.get_quarter_circumference_frequency(wn_sp_min_req_1)
-        x_freq_max_1, y_freq_max_1 = self.get_quarter_circumference_frequency(wn_sp_max_req_1)
-
-        # Level 2
-        x_freq_min_2, y_freq_min_2 = self.get_quarter_circumference_frequency(wn_sp_min_req_2)
-        x_freq_max_2, y_freq_max_2 = self.get_quarter_circumference_frequency(wn_sp_max_req_2)
-
-        # Level 3
-
-        ax2.plot(x_damp_min_1, y_damp_min_1, linestyle="--", color="red", label="Level 1")
-        ax2.plot(np.linspace(-1000, 100, 100), 0.0*np.linspace(-1000, 100, 100), linestyle="--", color="red")
-        ax2.plot(x_freq_min_1, y_freq_min_1, linestyle="--", color="red", label="")
-        ax2.plot(x_freq_max_1, y_freq_max_1, linestyle="--", color="red", label="")
-        ax2.plot(x_damp_min_2, y_damp_min_2, linestyle="--", color="orange", label="Level 2")
-        ax2.plot(x_freq_min_2, y_freq_min_2, linestyle="--", color="yellow", label="Level 2 & 3")
-        ax2.plot(x_freq_max_2, y_freq_max_2, linestyle="--", color="orange", label="")
-        ax2.legend(loc="upper right")
-        ax2.set_xbound(real_sp * 3, 0.1)
-        ax2.set_ybound(-imag_sp, imag_sp * 4)
-        plt.show()
+        self.plot_s_plane(real_sp, imag_sp, z_sp_reqs, wn_sp_reqs)
 
 
         outputs[
@@ -199,6 +126,7 @@ class CheckShortPeriod(om.ExplicitComponent):
         outputs[
             "data:handling_qualities:longitudinal:modes:short_period:check:undamped_frequency:satisfaction_level"
         ] = check_shortperiod_frequency
+
 
     @staticmethod
     def get_short_period_requirements(flight_phase_category, n_alpha):
@@ -292,12 +220,130 @@ class CheckShortPeriod(om.ExplicitComponent):
 
 
     @staticmethod
-    def get_quarter_circumference_frequency(radius):
+    def check_short_period_requirements(z_sp, wn_sp, z_sp_reqs, wn_sp_reqs):
+
+        z_sp_min_req_1 = z_sp_reqs[0]
+        z_sp_max_req_1 = z_sp_reqs[1]
+        z_sp_min_req_2 = z_sp_reqs[2]
+        z_sp_max_req_2 = z_sp_reqs[3]
+        z_sp_min_req_3 = z_sp_reqs[4]
+
+        wn_sp_min_req_1 = wn_sp_reqs[0]
+        wn_sp_max_req_1 = wn_sp_reqs[1]
+        wn_sp_min_req_2 = wn_sp_reqs[2]
+        wn_sp_max_req_2 = wn_sp_reqs[3]
+        wn_sp_min_req_3 = wn_sp_reqs[4]
+
+        check_shortperiod_damping = 0.0
+        if z_sp_min_req_1 <= z_sp <= z_sp_max_req_1:
+            check_shortperiod_damping = 1.0
+        elif z_sp_min_req_2 <= z_sp <= z_sp_max_req_2:
+            check_shortperiod_damping = 2.0
+        elif z_sp_min_req_3 <= z_sp:
+            check_shortperiod_damping = 3.0
+
+        check_shortperiod_frequency = 0.0
+        if wn_sp_min_req_1 <= wn_sp <= wn_sp_max_req_1:
+            check_shortperiod_damping = 1.0
+        elif wn_sp_min_req_2 <= wn_sp <= wn_sp_max_req_2:
+            check_shortperiod_damping = 2.0
+        elif wn_sp_min_req_3 <= wn_sp:
+            check_shortperiod_damping = 3.0
+
+        return check_shortperiod_damping, check_shortperiod_frequency
+
+
+    @staticmethod
+    def plot_s_plane(real_sp, imag_sp, z_sp_reqs, wn_sp_reqs):
+
+        def get_damping_limits(damping_ratio):
+            if damping_ratio == 0.0:
+                x = np.linspace(-100, 0.0, 100) * 0.0
+                y = np.linspace(-100, 0.0, 100)
+            elif damping_ratio == 1.0 or damping_ratio > 1.0:
+                x = np.linspace(-100, 0.0, 100)
+                y = np.linspace(-100, 0.0, 100) * 0.0
+            else:
+                phi = math.asin(damping_ratio)
+                phi = math.pi / 2 - phi
+                x = np.linspace(-100, 0.0, 100)
+                y = math.tan(-phi) * x
+
+            return x, y
+
+        def get_frequency_limits(wn):
+            angle = np.linspace(math.pi, math.pi / 2.0, 100)
+
+            x = wn * np.cos(angle)
+            y = wn * np.sin(angle)
+
+            return x, y
+
+        z_sp_min_req_1 = z_sp_reqs[0]
+        z_sp_max_req_1 = z_sp_reqs[1]
+        z_sp_min_req_2 = z_sp_reqs[2]
+        z_sp_max_req_2 = z_sp_reqs[3]
+        z_sp_min_req_3 = z_sp_reqs[4]
+
+        wn_sp_min_req_1 = wn_sp_reqs[0]
+        wn_sp_max_req_1 = wn_sp_reqs[1]
+        wn_sp_min_req_2 = wn_sp_reqs[2]
+        wn_sp_max_req_2 = wn_sp_reqs[3]
+        wn_sp_min_req_3 = wn_sp_reqs[4]
+
+        fig2, ax2 = plt.subplots()
+        ax2.set_title("Check of Short Period Characteristics Versus Flying Quality Requirements")
+        ax2.set_xlabel(r"$n$")
+        ax2.set_ylabel(r"$jw$")
+        ax2.grid(True, which="both")
+        # x-axis
+        ax2.plot(np.linspace(-1000, 1000, 1000), 0.0 * np.linspace(-1000, 1000, 1000), color="black")
+        # y-axis
+        ax2.plot(0.0 * np.linspace(-1000, 1000, 1000), np.linspace(-1000, 1000, 1000), color="black")
+
+        ax2.scatter(real_sp, imag_sp, label=r"$\lambda_{sp}$")
+
+        # Damping ratio limits
+        # Level 1
+        x_damp_min_1, y_damp_min_1 = get_damping_limits(z_sp_min_req_1)
+        ax2.plot(x_damp_min_1, y_damp_min_1, linestyle="--", color="red", label="Level 1")
+        x_damp_max_1, y_damp_max_1 = get_damping_limits(z_sp_max_req_1)
+        ax2.plot(x_damp_max_1, y_damp_max_1, linestyle="--", color="red", label="")
+        # Level 2
+        x_damp_min_2, y_damp_min_2 = get_damping_limits(z_sp_min_req_2)
+        ax2.plot(x_damp_min_2, y_damp_min_2, linestyle="--", color="orange", label="Level 2")
+        # x_damp_max_2, y_damp_max_2 = get_damping_limits(z_sp_max_req_2)
+        # ax2.plot(x_damp_max_2, y_damp_max_2, linestyle="--", color="orange", label="")
+        # Level 3
+        x_damp_min_3, y_damp_min_3 = get_damping_limits(z_sp_min_req_3)
+        ax2.plot(x_damp_min_3, y_damp_min_3, linestyle="--", color="yellow", label="Level 3")
+
+        # Frequency limits
+        # Level 1
+        x_freq_min_1, y_freq_min_1 = get_frequency_limits(wn_sp_min_req_1)
+        ax2.plot(x_freq_min_1, y_freq_min_1, linestyle="--", color="red", label="")
+        x_freq_max_1, y_freq_max_1 = get_frequency_limits(wn_sp_max_req_1)
+        ax2.plot(x_freq_max_1, y_freq_max_1, linestyle="--", color="red", label="")
+
+        # Level 2
+        x_freq_min_2, y_freq_min_2 = get_frequency_limits(wn_sp_min_req_2)
+        ax2.plot(x_freq_min_2, y_freq_min_2, linestyle="--", color="yellow", label="Level 2")
+        x_freq_max_2, y_freq_max_2 = get_frequency_limits(wn_sp_max_req_2)
+        ax2.plot(x_freq_max_2, y_freq_max_2, linestyle="--", color="orange", label="")
+
+        ax2.legend(loc="upper right")
+        ax2.set_xbound(real_sp * 3, 0.1)
+        ax2.set_ybound(-imag_sp, imag_sp * 4)
+        plt.show()
+
+
+    @staticmethod
+    def get_frequency_limits(wn):
 
         angle = np.linspace(math.pi, math.pi / 2.0, 100)
 
-        x = radius * np.cos(angle)
-        y = radius * np.sin(angle)
+        x = wn * np.cos(angle)
+        y = wn * np.sin(angle)
 
         return x, y
 

@@ -13,6 +13,8 @@
 
 from openmdao.api import Group
 
+from fastga.models.handling_qualities.check_modes.lateral_directional.check_lateral import CheckLateral
+from fastga.models.handling_qualities.check_modes.longitudinal.check_longitudinal import CheckLongitudinal
 from fastga.models.handling_qualities.lateral_directional_dynamics.lateral_directional_spacestate import \
     LateralDirectionalSpaceStateMatrix
 from fastga.models.handling_qualities.longitudinal_dynamics.longitudinal_spacestate import LongitudinalSpaceStateMatrix
@@ -64,3 +66,52 @@ class AircraftModesComputation(Group):
             LateralDirectionalSpaceStateMatrix(),
             promotes=["*"],
         )
+
+
+
+class AircraftModesAnalysis(Group):
+    """
+    analysis the aircraft's modes characteristics according to handling qualities regulation.
+    """
+
+    def initialize(self):
+        """Definition of the options of the group"""
+        self.options.declare("use_openvsp", default=True, types=bool)
+        self.options.declare("openvsp_exe_path", default="", types=str, allow_none=True)
+        self.options.declare("result_folder_path", default="", types=str, allow_none=True)
+        self.options.declare("wing_airfoil", default="naca23012.af", types=str, allow_none=True)
+        self.options.declare("htp_airfoil", default="naca0012.af", types=str, allow_none=True)
+        self.options.declare("vtp_airfoil", default="naca0012.af", types=str, allow_none=True)
+        self.options.declare("add_fuselage", default=False, types=bool, allow_none=False)
+
+    def setup(self):
+        # Compute aircraft modes
+        self.add_subsystem(
+            "aircraft_modes_computation",
+            AircraftModesComputation(
+                use_openvsp=self.options["use_openvsp"],
+                result_folder_path=self.options["result_folder_path"],
+                openvsp_exe_path=self.options["openvsp_exe_path"],
+                wing_airfoil=self.options["wing_airfoil"],
+                htp_airfoil=self.options["htp_airfoil"],
+                vtp_airfoil=self.options["vtp_airfoil"],
+                add_fuselage=self.options["add_fuselage"]
+            ),
+            promotes=["*"],
+        )
+
+
+        # Check longitudinal dynamics
+        self.add_subsystem(
+            "check_longitudinal",
+            CheckLongitudinal(),
+            promotes=["*"],
+        )
+
+        # Check lateral-directional dynamics
+        self.add_subsystem(
+            "check_lateral",
+            CheckLateral(),
+            promotes=["*"],
+        )
+
