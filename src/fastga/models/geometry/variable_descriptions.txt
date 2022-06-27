@@ -3,6 +3,7 @@
 # my:variable||The description of my:variable, as long as needed, but on one line.
 # The separator "||" can be surrounded with spaces (that will be ignored)
 
+data:geometry:aircraft:class || aircraft classification according to handling qualities regulation. Values can be: 1.0, 2.0, 3.0 or 4.0 depending if the airplane is Class I, II, III or IV, respectively.
 data:geometry:aircraft:wet_area || aircraft total wet area
 data:geometry:aircraft:length || total length of the aircraft
 
