@@ -25,7 +25,7 @@ from pandas import read_csv
 
 from scipy import interpolate
 
-from fastga.models.handling_qualities import resources, digit_figures
+from fastga.models.handling_qualities.resources import digit_figures
 
 _LOGGER = logging.getLogger(__name__)
 
