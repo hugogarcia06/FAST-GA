@@ -1,0 +1,12 @@
+#          Derivative:                                                                               
+#            wrt          wrt          wrt          wrt          wrt          wrt          wrt    
+Coef         Alpha        Beta          p            q            r           Mach         U      
+#            per          per          per          per          per          per          per    
+#            rad          rad          rad          rad          rad          M            u      
+# 
+CL           CL_alph      0.0          0.0          CL_qqqq      0.0          0.0          CL_u
+CD           CD_alph      0.0          0.0          CD_qqqq      0.0          0.0          CD_u
+CS           0.0          CY_beta      CY_pppp      0.0          CY_rrrr      0.0          0.0
+CMl          0.0          Cl_beta      Cl_pppp      0.0          Cl_rrrr      0.0          0.0
+CMm          Cm_alph      0.0          0.0          Cm_qqqq      0.0          0.0          Cm_u
+CMn          0.0          Cn_beta      Cn_pppp      0.0          Cn_rrrr      0.0          0.0
