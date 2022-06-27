@@ -1,7 +1,7 @@
 """
     FAST - Copyright (c) 2016 ONERA ISAE
 """
-#  This file is part of FAST-OAD_CS25
+#  This file is part of FAST-OAD : A framework for rapid Overall Aircraft Design
 #  Copyright (C) 2022 ONERA & ISAE-SUPAERO
 #  FAST is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -60,11 +60,18 @@ class LongitudinalSpaceStateMatrix(om.ExplicitComponent):
         self.add_input("data:handling_qualities:longitudinal:derivatives:CL:pitchrate", val=np.nan, units="rad**-1")
         self.add_input("data:handling_qualities:longitudinal:derivatives:Cm:pitchrate", val=np.nan, units="rad**-1")
 
-
         # TODO: add outputs
-        self.add_output("data:handling_qualities:longitudinal:spacestate:matrixA", units="rad**-1")
-        # self.add_output("data:handling_qualities:longitudinal:spacestate:matrixB", units="rad**-1")
-        self.add_output("data:handling_qualities:longitudinal:spacestate:eigenvalues")
+        self.add_output("data:handling_qualities:longitudinal:modes:phugoid:real_part", units="s**-1")
+        self.add_output("data:handling_qualities:longitudinal:modes:phugoid:imag_part", units="s**-1")
+        self.add_output("data:handling_qualities:longitudinal:modes:phugoid:damping_ratio")
+        self.add_output("data:handling_qualities:longitudinal:modes:phugoid:undamped_frequency", units="s**-1")
+        self.add_output("data:handling_qualities:longitudinal:modes:phugoid:period", units="s")
+        self.add_output("data:handling_qualities:longitudinal:modes:short_period:real_part", units="s**-1")
+        self.add_output("data:handling_qualities:longitudinal:modes:short_period:imag_part", units="s**-1")
+        self.add_output("data:handling_qualities:longitudinal:modes:short_period:damping_ratio")
+        self.add_output("data:handling_qualities:longitudinal:modes:short_period:undamped_frequency", units="s**-1")
+        self.add_output("data:handling_qualities:longitudinal:modes:short_period:period", units="s")
+
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
         # Reference condition parameters:
@@ -89,7 +96,6 @@ class LongitudinalSpaceStateMatrix(om.ExplicitComponent):
         # TODO: compute inertia parameters
         mu = mass / (ro * S * c / 2.0)
         Iyy = inputs["data:weight:aircraft:inertia:Ioy"]
-        # Iyy = Iyy / (ro * S * (c / 2.0)**3)
 
         ###### SPEED DERIVATIVES ######
         # Aerodynamics
@@ -151,22 +157,23 @@ class LongitudinalSpaceStateMatrix(om.ExplicitComponent):
         Z_q = q_s * S * c / (2*u_s) * CZ_q / mass
         M_q = q_s * S * c**2 / (2*u_s) * Cm_q / Iyy
 
+        g = 32.174   # gravity acceleration in imperial units (ft/s**2)
 
         # Building the matrix (Roskam)
         a11 = float(X_u)
         a12 = float(X_a)
         a13 = 0.0
-        a14 = float(-9.81*math.cos(theta_s))
+        a14 = float(-g*math.cos(theta_s))
 
         a21 = float(Z_u / (u_s - Z_a_dot))
         a22 = float(Z_a / (u_s - Z_a_dot))
         a23 = float((u_s + Z_q) / (u_s - Z_a_dot))
-        a24 = float(-9.81*math.sin(theta_s) / (u_s - Z_a_dot))
+        a24 = float(-g*math.sin(theta_s) / (u_s - Z_a_dot))
 
         a31 = float(M_u + M_a_dot * Z_u / (u_s - Z_a_dot))
         a32 = float(M_a + M_a_dot * Z_a / (u_s - Z_a_dot))
         a33 = float(M_q + M_a_dot * (u_s + Z_q) / (u_s - Z_a_dot))
-        a34 = float(- M_a_dot * 9.81 * math.sin(theta_s) / (u_s - Z_a_dot))
+        a34 = float(- M_a_dot * g * math.sin(theta_s) / (u_s - Z_a_dot))
 
         a41 = 0.0
         a42 = 0.0
@@ -194,23 +201,31 @@ class LongitudinalSpaceStateMatrix(om.ExplicitComponent):
         # w = w / t_adim
 
         # Selection of the eigenvalues of each mode
+        ## Short period mode ##
         w_sp = w[1]
         real_sp = w_sp.real
         imag_sp = w_sp.imag
         wn_sp = math.sqrt(real_sp**2 + imag_sp**2)
-        dump_sp = - real_sp / math.sqrt(real_sp**2 + imag_sp**2)
+        damp_sp = - real_sp / math.sqrt(real_sp**2 + imag_sp**2)
         period_sp = 2*math.pi / imag_sp
 
-        # TODO: the result of the phugoid method are far from being close to the test data.
+        ## Phugoid mode ##
         w_ph = w[3]
         real_ph = w_ph.real
         imag_ph = w_ph.imag
         wn_ph = math.sqrt(real_ph**2 + imag_ph**2)
-        dump_ph = - real_ph / math.sqrt(real_ph**2 + imag_ph**2)
+        damp_ph = - real_ph / math.sqrt(real_ph**2 + imag_ph**2)
         period_ph = 2*math.pi / imag_ph
 
-        outputs["data:handling_qualities:longitudinal:spacestate:matrixA"] = A
-        # outputs["data:handling_qualities:longitudinal:spacestate:matrixB"] = B
+        outputs["data:handling_qualities:longitudinal:modes:phugoid:real_part"] = real_ph
+        outputs["data:handling_qualities:longitudinal:modes:phugoid:imag_part"] = imag_ph
+        outputs["data:handling_qualities:longitudinal:modes:phugoid:damping_ratio"] = damp_ph
+        outputs["data:handling_qualities:longitudinal:modes:phugoid:undamped_frequency"] = wn_ph
+        outputs["data:handling_qualities:longitudinal:modes:phugoid:period"] = period_ph
+        outputs["data:handling_qualities:longitudinal:modes:short_period:real_part"] = real_sp
+        outputs["data:handling_qualities:longitudinal:modes:short_period:imag_part"] = imag_sp
+        outputs["data:handling_qualities:longitudinal:modes:short_period:damping_ratio"] = damp_sp
+        outputs["data:handling_qualities:longitudinal:modes:short_period:undamped_frequency"] = wn_sp
+        outputs["data:handling_qualities:longitudinal:modes:short_period:period"] = period_sp
 
-        outputs["data:handling_qualities:longitudinal:spacestate:eigenvalues"] = w
 

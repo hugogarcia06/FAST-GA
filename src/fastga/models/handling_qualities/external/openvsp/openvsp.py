@@ -84,6 +84,9 @@ class OPENVSPSimpleGeometry(ExternalCodeComp):
         )
 
     def setup(self):
+        self.add_input("data:reference_flight_condition:CG:x", val=np.nan, units="m")
+        self.add_input("data:reference_flight_condition:CG:z", val=np.nan, units="m")
+
         self.add_input("data:geometry:fuselage:maximum_width", val=np.nan, units="m")
         self.add_input("data:geometry:fuselage:maximum_height", val=np.nan, units="m")
         self.add_input("data:geometry:fuselage:length", val=np.nan, units="m")
@@ -388,6 +391,8 @@ class OPENVSPSimpleGeometry(ExternalCodeComp):
         ############################################################################################
 
         # Get inputs (and calculate missing ones)
+        x_cg = inputs["data:reference_flight_condition:CG:x"]
+        z_cg = inputs["data:reference_flight_condition:CG:z"]
         # Fuselage Geometry
         fus_length = float(inputs["data:geometry:fuselage:length"])
         fus_front_length = float(inputs["data:geometry:fuselage:front_length"])
@@ -720,9 +725,11 @@ class OPENVSPSimpleGeometry(ExternalCodeComp):
             parser.transfer_var(float(l0_wing), 0, 3)
             parser.mark_anchor("Bref")
             parser.transfer_var(float(span_wing), 0, 3)
-            # TODO: add the x-cg, y-cg and z-cg from reference condition
             parser.mark_anchor("X_cg")
-            parser.transfer_var(float(fa_length), 0, 3)
+            parser.transfer_var(float(x_cg), 0, 3)
+            # parser.transfer_var(float(fa_length), 0, 3)
+            parser.mark_anchor("Z_cg")
+            parser.transfer_var(float(z_cg), 0, 3)
             parser.mark_anchor("Mach")
             parser.transfer_var(float(mach), 0, 3)
             parser.mark_anchor("AOA")

@@ -27,24 +27,32 @@ class ReferenceFlightCondition(om.ExplicitComponent):
         self.add_input("data:aerodynamics:aircraft:cruise:CD0", val=np.nan)
         self.add_input("data:aerodynamics:wing:cruise:induced_drag_coefficient", val=np.nan)
 
+        self.add_input("data:weight:aircraft:CG:aft:x", val=np.nan, units="m")
+        self.add_input("data:weight:aircraft:CG:fwd:x", val=np.nan, units="m")
+
+
         self.add_output("data:reference_flight_condition:mach")
         self.add_output("data:reference_flight_condition:alpha", units="deg")
         self.add_output("data:reference_flight_condition:theta", units="deg")
         self.add_output("data:reference_flight_condition:speed", units="m/s")
         self.add_output("data:reference_flight_condition:altitude", units="m")
+        self.add_output("data:reference_flight_condition:air_density", units="kg/m**3")
         self.add_output("data:reference_flight_condition:weight", units="kg")
         self.add_output("data:reference_flight_condition:CL")
         self.add_output("data:reference_flight_condition:CD")
         self.add_output("data:reference_flight_condition:CD0")
         self.add_output("data:reference_flight_condition:CT")
         self.add_output("data:reference_flight_condition:dynamic_pressure", units="Pa")
-        #self.add_output("data:reference_flight_condition:CG:x", units="m")
+        self.add_output("data:reference_flight_condition:CG:x", units="m")
         self.add_output("data:reference_flight_condition:CG:z", units="m")
         self.add_output("data:reference_flight_condition:flaps_deflection", units="deg")
+        self.add_output("data:reference_flight_condition:flight_phase_category")
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
 
         S = inputs["data:geometry:wing:area"]
+
+        flight_phase_category = 2.0
 
         mach = 0.2
         alpha = 0.0
@@ -66,6 +74,11 @@ class ReferenceFlightCondition(om.ExplicitComponent):
 
         flaps_deflection = 0.0
 
+        # NOTE: for purposes of preliminary design, the most critical airplane configurations occur at the most forward
+        # NOTE:  and at the most aft center of gravity locations.
+        cg_aft = inputs["data:weight:aircraft:CG:aft:x"]
+        cg_fwd = inputs["data:weight:aircraft:CG:fwd:x"]
+        cg_x = (cg_fwd + cg_aft) / 2.0
         cg_z = 0.0
 
         outputs["data:reference_flight_condition:mach"] = mach
@@ -73,11 +86,14 @@ class ReferenceFlightCondition(om.ExplicitComponent):
         outputs["data:reference_flight_condition:theta"] = theta
         outputs["data:reference_flight_condition:speed"] = speed
         outputs["data:reference_flight_condition:weight"] = weight
+        outputs["data:reference_flight_condition:altitude"] = altitude
+        outputs["data:reference_flight_condition:air_density"] = rho
         outputs["data:reference_flight_condition:CL"] = CL
         outputs["data:reference_flight_condition:CD"] = CD
         outputs["data:reference_flight_condition:CT"] = CT
         outputs["data:reference_flight_condition:dynamic_pressure"] = q
-        #outputs["data:reference_flight_condition:CG:x"] = cg_x
+        outputs["data:reference_flight_condition:CG:x"] = cg_x
         outputs["data:reference_flight_condition:CG:z"] = cg_z
         outputs["data:reference_flight_condition:flaps_deflection"] = flaps_deflection
         outputs["data:reference_flight_condition:CD0"] = CD0
+        outputs["data:reference_flight_condition:flight_phase_category"] = flight_phase_category
