@@ -15,12 +15,10 @@ from openmdao.api import Group
 
 from fastga.models.handling_qualities.reference_flight_condition import ReferenceFlightCondition
 from fastga.models.handling_qualities.stability_derivatives_high_speed import StabilityDerivativesHighSpeed
-
-
-# TODO: Register module
 from fastga.models.handling_qualities.utils.missing_geometry import MissingGeometry
 
 
+# TODO: Register module
 class StabilityDerivatives(Group):
     """
     Computes the aerodynamic stability coefficients of the aircraft for high or low speed via OpenVSP or with semi-empirical methods from
