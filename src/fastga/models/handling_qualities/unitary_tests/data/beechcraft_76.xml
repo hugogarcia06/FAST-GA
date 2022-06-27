@@ -1,10 +1,5 @@
 <FASTOAD_model>
   <data>
-    <reference_flight_condition>
-      <mach is_input="True">0.2<!--mach number at reference flight condition--></mach>
-      <altitude units="m" is_input="True">10000<!--flight altitude at reference condition--></altitude>
-      <alpha units="deg" is_input="True">2.0<!--angle of attack at reference flight condition--></alpha>
-    </reference_flight_condition>
     <TLAR>
       <NPAX_design is_input="True">2.0<!--design number of passengers (two pilots are included de facto, meaning for a 2 seater, NPAX_design is equal to 0)--></NPAX_design>
       <luggage_mass_design units="kg" is_input="True">70.0<!--luggage design mass--></luggage_mass_design>
@@ -17,6 +12,7 @@
       <flap_type is_input="True">1.0<!--flap type (0.0 - plain flap, 2.0 - single slotted flap, 3.0 - split flap)--></flap_type>
       <has_T_tail is_input="True">1.0<!--0=horizontal tail is attached to fuselage / 1=horizontal tail is attached to top of vertical tail--></has_T_tail>
       <aircraft>
+        <class is_input="False">1.0<!--aircraft class according to handling qualities regulation--></class>
         <wet_area units="m**2" is_input="False">82.21685637423752<!--aircraft total wet area--></wet_area>
       </aircraft>
       <cabin>
@@ -134,7 +130,7 @@
           <max_deflection units="deg" is_input="True">30.0<!--rudder maximum deflection--></max_deflection>
         </rudder>
         <tip>
-          <chord units="m" is_input="False">0.9302527284655899<!--chord length at tip of vertical tail--></chord>
+          <chord units="m" is_input="False">2.14375<!--chord length at tip of vertical tail--></chord>
         </tip>
       </vertical_tail>
       <wing>
@@ -205,10 +201,6 @@
           <width units="m" is_input="False">0.9291288709126333<!--width of the nacelle--></width>
           <y units="m" is_input="False">[1.97296, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0]<!--Y-position of nacelle center--></y>
         </nacelle>
-        <propeller>
-          <depth units="m" is_input="False">1.0</depth>
-          <diameter units="m" is_input="False">1.0<!--diameter of the propeller--></diameter>
-        </propeller>
       </propulsion>
     </geometry>
     <handling_qualities>
@@ -570,6 +562,12 @@
         <ZFW units="kg" is_input="False">1508.4691560483798<!--aircraft mass with payload, without fuel--></ZFW>
         <max_payload units="kg" is_input="False">450.0<!--max payload weight--></max_payload>
         <payload units="kg" is_input="False">390.0<!--design payload weight--></payload>
+        <inertia>
+          <Iox units="kg*m**2" is_input="False"> 12.038<!--moment of inertia around aircraft x-axis--></Iox>
+          <Ioy units="kg*m**2" is_input="False">3.832<!--moment of inertia around aircraft y-axis--></Ioy>
+          <Ioz units="kg*m**2" is_input="False">15.454<!--moment of inertia around aircraft z-axis--></Ioz>
+          <Ioxz units="kg*m**2" is_input="False">0.544<!--product of inertia--></Ioxz>
+        </inertia>
         <CG>
           <aft>
             <MAC_position is_input="False">0.3694798439402447<!--most aft X-position of center of gravity as ratio of mean aerodynamic chord--></MAC_position>

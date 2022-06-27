@@ -1,10 +1,5 @@
 <FASTOAD_model>
   <data>
-    <reference_flight_condition>
-      <mach is_input="True">0.2<!--mach number at reference flight condition--></mach>
-      <altitude units="m" is_input="True">10000<!--flight altitude at reference condition--></altitude>
-      <alpha units="deg" is_input="True">2.0<!--angle of attack at reference flight condition--></alpha>
-    </reference_flight_condition>
     <TLAR>
       <NPAX_design is_input="True">2.0<!--design number of passengers (two pilots are included de facto, meaning for a 2 seater, NPAX_design is equal to 0)--></NPAX_design>
       <luggage_mass_design units="kg" is_input="True">35.0<!--luggage design mass--></luggage_mass_design>
@@ -17,6 +12,7 @@
       <flap_type is_input="True">1.0<!--flap type (0.0 - plain flap, 2.0 - single slotted flap, 3.0 - split flap)--></flap_type>
       <has_T_tail is_input="True">0.0<!--0=horizontal tail is attached to fuselage / 1=horizontal tail is attached to top of vertical tail--></has_T_tail>
       <aircraft>
+        <class is_input="False">1.0<!--aircraft class according to handling qualities regulation--></class>
         <wet_area units="m**2" is_input="False">59.300124140468796<!--aircraft total wet area--></wet_area>
       </aircraft>
       <cabin>
@@ -570,6 +566,12 @@
         <ZFW units="kg" is_input="False">1361.3525345316934<!--aircraft mass with payload, without fuel--></ZFW>
         <max_payload units="kg" is_input="False">420.0<!--max payload weight--></max_payload>
         <payload units="kg" is_input="False">355.0<!--design payload weight--></payload>
+        <inertia>
+          <Iox units="kg*m**2" is_input="False">390.0<!--design payload weight--></Iox>
+          <Ioy units="kg*m**2" is_input="False">390.0<!--design payload weight--></Ioy>
+          <Ioz units="kg*m**2" is_input="False">390.0<!--design payload weight--></Ioz>
+          <Ioxz units="kg*m**2" is_input="False">390.0<!--design payload weight--></Ioxz>
+        </inertia>
         <CG>
           <aft>
             <MAC_position is_input="False">0.31318999267334235<!--most aft X-position of center of gravity as ratio of mean aerodynamic chord--></MAC_position>
