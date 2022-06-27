@@ -42,7 +42,6 @@ data:handling_qualities:longitudinal:derivatives:CD:alpha ||
 data:handling_qualities:longitudinal:derivatives:CD:alpharate ||
 data:handling_qualities:longitudinal:derivatives:CD:pitchrate ||
 data:handling_qualities:longitudinal:derivatives:CD:speed ||
-data:handling_qualities:longitudinal:derivatives:CL:alpha ||
 data:handling_qualities:longitudinal:derivatives:CL:alpharate ||
 data:handling_qualities:longitudinal:derivatives:CL:pitchrate ||
 data:handling_qualities:longitudinal:derivatives:CL:speed ||
@@ -64,7 +63,41 @@ data:handling_qualities:longitudinal:derivatives:thrust:Cm:alpha ||
 data:handling_qualities:longitudinal:derivatives:thrust:CX:speed ||
 data:handling_qualities:longitudinal:derivatives:thrust:Cm:speed ||
 
+data:handling_qualities:longitudinal:modes:phugoid:real_part || Real part of the complex eigenvalue corresponding to the phugoid mode.
+data:handling_qualities:longitudinal:modes:phugoid:imag_part || Imaginary part of the complex eigenvalue corresponding to the phugoid mode.
+data:handling_qualities:longitudinal:modes:phugoid:damping_ratio ||
+data:handling_qualities:longitudinal:modes:phugoid:period ||
+data:handling_qualities:longitudinal:modes:phugoid:undamped_frequency ||
+data:handling_qualities:longitudinal:modes:short_period:real_part || Real part of the complex eigenvalue corresponding to the short period mode.
+data:handling_qualities:longitudinal:modes:short_period:imag_part || Imaginary part of the complex eigenvalue corresponding to the short period mode.
+data:handling_qualities:longitudinal:modes:short_period:damping_ratio ||
+data:handling_qualities:longitudinal:modes:short_period:period ||
+data:handling_qualities:longitudinal:modes:short_period:undamped_frequency ||
 
+data:handling_qualities:longitudinal:modes:phugoid:check:damping_ratio:satisfaction_level || value that shows the requirements satisfaction level according to regulations
+data:handling_qualities:longitudinal:modes:short_period:check:damping_ratio:satisfaction_level || value that shows the requirements satisfaction level according to regulations
+data:handling_qualities:longitudinal:modes:short_period:check:undamped_frequency:satisfaction_level || value that shows the requirements satisfaction level according to regulations
+
+data:handling_qualities:lateral:modes:dutch_roll:real_part ||
+data:handling_qualities:lateral:modes:dutch_roll:imag_part ||
+data:handling_qualities:lateral:modes:dutch_roll:damping_ratio ||
+data:handling_qualities:lateral:modes:dutch_roll:undamped_frequency ||
+data:handling_qualities:lateral:modes:dutch_roll:period ||
+data:handling_qualities:lateral:modes:roll:real_part ||
+data:handling_qualities:lateral:modes:roll:imag_part ||
+data:handling_qualities:lateral:modes:roll:damping_ratio ||
+data:handling_qualities:lateral:modes:roll:undamped_frequency ||
+data:handling_qualities:lateral:modes:roll:time_half ||
+data:handling_qualities:lateral:modes:spiral:real_part ||
+data:handling_qualities:lateral:modes:spiral:imag_part ||
+data:handling_qualities:lateral:modes:spiral:damping_ratio ||
+data:handling_qualities:lateral:modes:spiral:undamped_frequency ||
+data:handling_qualities:lateral:modes:spiral:time_half ||
+
+
+data:handling_qualities:lateral:modes:dutch_roll:check:damping_ratio:satisfaction_level || value that shows the requirements satisfaction level according to regulations
+data:handling_qualities:lateral:modes:dutch_roll:check:undamped_frequency:satisfaction_level || value that shows the requirements satisfaction level according to regulations
+data:handling_qualities:lateral:modes:dutch_roll:check:damping_ratio_frequency_product:satisfaction_level || value that shows the requirements satisfaction level according to regulations
 
 data:handling_qualities:lateral:spacestate:matrixA ||
 data:handling_qualities:lateral:spacestate:matrixB ||
@@ -102,3 +135,4 @@ data:reference_flight_condition:mach ||
 data:reference_flight_condition:speed ||
 data:reference_flight_condition:theta ||
 data:reference_flight_condition:weight ||
+data:reference_flight_condition:flight_phase_category || flight phase category classification according to handling qualities requirements. Category A = 1.0, Category B = 2.0, Category C = 3.0
