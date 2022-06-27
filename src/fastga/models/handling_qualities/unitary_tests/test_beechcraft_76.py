@@ -13,11 +13,14 @@
 
 import pytest
 
+from .test_functions import alpha_derivatives
 from ..compute_static_margin import ComputeStaticMargin
+from ..stability_derivatives import StabilityDerivatives
 from ..tail_sizing.update_vt_area import UpdateVTArea
 from ..tail_sizing.update_ht_area import UpdateHTArea
 from ..tail_sizing.compute_to_rotation_limit import ComputeTORotationLimitGroup
 from ..tail_sizing.compute_balked_landing_limit import ComputeBalkedLandingLimit
+from ..longitudinal_dynamics.compute_longitudinal_derivatives import ComputeLongitudinalDerivatives
 
 from tests.testing_utilities import run_system, get_indep_var_comp, list_inputs
 
@@ -138,3 +141,18 @@ def test_balked_landing_limit():
         "data:handling_qualities:balked_landing_limit:MAC_position"
     ]
     assert balked_landing_limit_ratio == pytest.approx(-0.06, abs=1e-2)
+
+
+def test_alpha_derivatives():
+    """ Test the computation of the alpha derivatives via DATCOM or OpenVSP"""
+
+    use_openvsp = False
+    add_fuselage = True
+
+    alpha_derivatives(
+        use_openvsp, add_fuselage, XML_FILE
+    )
+
+
+
+

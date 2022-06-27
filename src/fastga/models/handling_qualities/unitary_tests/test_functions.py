@@ -21,9 +21,15 @@ import os.path as pth
 import pytest
 import numpy as np
 
+from importlib.resources import path
+
+from .. import resources as local_resources
+
 from platform import system
 from pathlib import Path
 from tempfile import TemporaryDirectory
+
+from openmdao.utils.file_wrap import InputFileGenerator
 
 from fastga.models.handling_qualities.external.openvsp.compute_stab import ComputeSTABopenvsp
 from fastga.models.handling_qualities.stability_derivatives import StabilityDerivatives
@@ -31,7 +37,8 @@ from tests.testing_utilities import run_system, get_indep_var_comp, list_inputs
 from tests.xfoil_exe.get_xfoil import get_xfoil_path
 
 from fastga.models.aerodynamics.external.xfoil import resources
-
+from ..aircraft_modes_analysis import AircraftModesComputation, AircraftModesAnalysis
+from ..longitudinal_dynamics.compute_longitudinal_derivatives import ComputeLongitudinalDerivatives
 
 RESULTS_FOLDER = pth.join(pth.dirname(__file__), "results")
 TMP_SAVE_FOLDER = "test_save"
@@ -255,7 +262,7 @@ def comp_stab_coef(
     )
 
 
-def stability_group(
+def stability(
     add_fuselage: bool,
     use_openvsp: bool,
     XML_FILE: str,
@@ -324,7 +331,58 @@ def stability_group(
     Cn_yawrate = problem.get_val("data:handling_qualities:lateral:derivatives:Cn:yawrate", units="rad**-1")
 
     # Write the results in a file
+    parser = InputFileGenerator()
+    RESULTS_FILE = "results_DATCOM"
+    if use_openvsp:
+        RESULTS_FILE = "results_openvsp"
 
+    with path(local_resources, "template_results.txt") as input_template_path:
+        parser.set_template_file(str(input_template_path))
+        parser.set_generated_file(RESULTS_FILE)
+        parser.mark_anchor("CL_alph")
+        parser.transfer_var(round(float(CL_alpha), 5), 0, 2)
+        parser.mark_anchor("CD_alph")
+        parser.transfer_var(round(float(CD_alpha), 5), 0, 2)
+        parser.mark_anchor("Cm_alph")
+        parser.transfer_var(round(float(Cm_alpha), 5), 0, 2)
+        parser.reset_anchor()
+        parser.mark_anchor("CL_u")
+        parser.transfer_var(round(float(CL_speed), 5), 0, 8)
+        parser.mark_anchor("CD_u")
+        parser.transfer_var(round(float(CD_speed), 5), 0, 8)
+        parser.mark_anchor("Cm_u")
+        parser.transfer_var(round(float(Cm_speed), 5), 0, 8)
+        parser.reset_anchor()
+        CL_q = round(float(CL_pitchrate), 5)
+        parser.mark_anchor("CL_qqqq")
+        parser.transfer_var(CL_q, 0, 5)
+        parser.mark_anchor("CD_qqqq")
+        parser.transfer_var(round(float(CD_pitchrate), 5), 0, 5)
+        parser.mark_anchor("Cm_qqqq")
+        parser.transfer_var(round(float(Cm_pitchrate), 5), 0, 5)
+        parser.reset_anchor()
+        parser.mark_anchor("CY_beta")
+        parser.transfer_var(round(float(CY_beta), 5), 0, 3)
+        parser.mark_anchor("Cl_beta")
+        parser.transfer_var(round(float(Cl_beta), 5), 0, 3)
+        parser.mark_anchor("Cn_beta")
+        parser.transfer_var(round(float(Cn_beta), 5), 0, 3)
+        parser.reset_anchor()
+        parser.mark_anchor("CY_pppp")
+        parser.transfer_var(round(float(CY_rollrate), 5), 0, 4)
+        parser.mark_anchor("Cl_pppp")
+        parser.transfer_var(round(float(Cl_rollrate), 5), 0, 4)
+        parser.mark_anchor("Cn_pppp")
+        parser.transfer_var(round(float(Cn_rollrate), 5), 0, 4)
+        parser.reset_anchor()
+        parser.mark_anchor("CY_rrrr")
+        parser.transfer_var(round(float(CY_yawrate), 5), 0, 6)
+        parser.mark_anchor("Cl_rrrr")
+        parser.transfer_var(round(float(Cl_yawrate), 5), 0, 6)
+        parser.mark_anchor("Cn_rrrr")
+        parser.transfer_var(round(float(Cn_yawrate), 5), 0, 6)
+        parser.reset_anchor()
+        parser.generate()
 
     duration_2nd_run = stop - start
 
@@ -340,4 +398,107 @@ def stability_group(
     # Return problem for complementary values check
     return problem
 
+
+def alpha_derivatives(use_openvsp, add_fuselage, XML_FILE):
+    # Run problem and check obtained value(s) is/(are) correct
+
+    # Create result temporary directory
+    results_folder = _create_tmp_directory()
+
+    # Transfer saved polar results to temporary folder
+    tmp_folder = polar_result_transfer()
+
+    ivc = get_indep_var_comp(
+        list_inputs(StabilityDerivatives(
+            result_folder_path=results_folder.name,
+            add_fuselage=add_fuselage,
+            use_openvsp=use_openvsp
+        )), __file__, XML_FILE
+    )
+    problem = run_system(
+        StabilityDerivatives(
+            result_folder_path=results_folder.name,
+            add_fuselage=add_fuselage,
+            use_openvsp=use_openvsp
+        ), ivc
+    )
+
+    # Retrieve polar results from temporary folder
+    polar_result_retrieve(tmp_folder)
+
+    # Remove existing result files
+    results_folder.cleanup()
+
+
+    CL_alpha = problem.get_val("data:handling_qualities:longitudinal:derivatives:CL:alpha", units="rad**-1")
+
+    return problem
+
+
+def aircraft_modes(add_fuselage, use_openvsp, XML_FILE):
+
+    # Create result temporary directory
+    results_folder = _create_tmp_directory()
+
+    # Transfer saved polar results to temporary folder
+    tmp_folder = polar_result_transfer()
+
+    ivc = get_indep_var_comp(
+        list_inputs(AircraftModesComputation(
+            result_folder_path=results_folder.name,
+            add_fuselage=add_fuselage,
+            use_openvsp=use_openvsp
+        )), __file__, XML_FILE
+    )
+
+    problem = run_system(
+        AircraftModesComputation(
+            result_folder_path=results_folder.name,
+            add_fuselage=add_fuselage,
+            use_openvsp=use_openvsp
+        ), ivc
+    )
+
+    # Retrieve polar results from temporary folder
+    polar_result_retrieve(tmp_folder)
+
+    # Remove existing result files
+    results_folder.cleanup()
+
+    damp_ph = problem.get_val("data:handling_qualities:longitudinal:modes:phugoid:damping_ratio")
+    wn_ph = problem.get_val("data:handling_qualities:longitudinal:modes:phugoid:undamped_frequency", units="s**-1")
+
+
+def check_aircraft_modes(add_fuselage, use_openvsp, XML_FILE):
+
+    # Create result temporary directory
+    results_folder = _create_tmp_directory()
+
+    # Transfer saved polar results to temporary folder
+    tmp_folder = polar_result_transfer()
+
+    ivc = get_indep_var_comp(
+        list_inputs(AircraftModesAnalysis(
+            result_folder_path=results_folder.name,
+            add_fuselage=add_fuselage,
+            use_openvsp=use_openvsp
+        )), __file__, XML_FILE
+    )
+
+    problem = run_system(
+        AircraftModesAnalysis(
+            result_folder_path=results_folder.name,
+            add_fuselage=add_fuselage,
+            use_openvsp=use_openvsp
+        ), ivc
+    )
+
+    # Retrieve polar results from temporary folder
+    polar_result_retrieve(tmp_folder)
+
+    # Remove existing result files
+    results_folder.cleanup()
+
+    damp_ph = problem.get_val("data:handling_qualities:longitudinal:modes:phugoid:damping_ratio")
+    wn_ph = problem.get_val("data:handling_qualities:longitudinal:modes:phugoid:undamped_frequency", units="s**-1")
 

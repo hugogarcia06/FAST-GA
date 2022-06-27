@@ -14,7 +14,7 @@
 import pytest
 import os.path as pth
 
-from fastga.models.handling_qualities.unitary_tests.test_functions import comp_stab_coef, stability_group
+from fastga.models.handling_qualities.unitary_tests.test_functions import comp_stab_coef, stability
 from fastga.models.handling_qualities.external.openvsp.openvsp import OPENVSPSimpleGeometry
 from fastga.models.handling_qualities.unitary_tests import data
 
@@ -77,19 +77,16 @@ def test_openvsp_comp_stab_coef():
     )
 
 
-def test_stability_group():
-    """
-    Test whether the different stability computation components are well grouped.
-    """
-    add_fuselage = False
-    use_openvsp = False
+def test_stability():
 
-    stability_group(
+    add_fuselage = False
+    use_openvsp = True
+
+    stability(
         add_fuselage,
         use_openvsp,
         XML_FILE,
     )
-
 
 
 

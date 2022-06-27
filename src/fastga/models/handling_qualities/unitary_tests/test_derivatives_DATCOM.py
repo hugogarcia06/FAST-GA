@@ -154,7 +154,7 @@ def test_CL_alpha_ht():
 
     # Run problem and check obtained value(s) is/(are) correct
     problem = run_system(CLAlphaHT(), ivc)
-    CL_alpha_H = problem.get_val("data:handling_qualities:longitudinal:derivatives:wing:CL:alpha", units="rad**-1")
+    CL_alpha_H = float(problem.get_val("data:handling_qualities:longitudinal:derivatives:horizontal_tail:CL:alpha", units="rad**-1"))
     assert CL_alpha_H == pytest.approx(4.286, abs=0.35)
 
 

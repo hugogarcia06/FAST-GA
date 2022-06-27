@@ -175,6 +175,8 @@ def compute_reynolds(
 
     # Run problem and check obtained value(s) is/(are) correct
     problem = run_system(ComputeUnitReynolds(low_speed_aero=False), ivc)
+    cruise_mach = problem["data:aerodynamics:cruise:mach"]
+    cruise_reynolds = problem.get_val("data:aerodynamics:cruise:unit_reynolds", units="ft**-1")
     assert problem["data:aerodynamics:cruise:mach"] == pytest.approx(mach_high_speed, abs=1e-4)
     assert problem.get_val(
         "data:aerodynamics:cruise:unit_reynolds", units="m**-1"
@@ -200,6 +202,21 @@ def cd0_high_speed(
 
     # noinspection PyTypeChecker
     problem = run_system(Cd0(propulsion_id=ENGINE_WRAPPER), ivc)
+    cd0_wing = problem["data:aerodynamics:wing:cruise:CD0"]
+    cd0_fuselage = problem["data:aerodynamics:fuselage:cruise:CD0"]
+    cd0_vt = problem["data:aerodynamics:vertical_tail:cruise:CD0"]
+    cd0_ht = problem["data:aerodynamics:horizontal_tail:cruise:CD0"]
+    cd0_lg = problem["data:aerodynamics:landing_gear:cruise:CD0"]
+    cd0_other = problem["data:aerodynamics:other:cruise:CD0"]
+    cd0_total_cal = 1.25 * (
+            problem["data:aerodynamics:wing:cruise:CD0"]
+            + problem["data:aerodynamics:fuselage:cruise:CD0"]
+            + problem["data:aerodynamics:horizontal_tail:cruise:CD0"]
+            + problem["data:aerodynamics:vertical_tail:cruise:CD0"]
+            + problem["data:aerodynamics:nacelles:cruise:CD0"]
+            + problem["data:aerodynamics:landing_gear:cruise:CD0"]
+            + problem["data:aerodynamics:other:cruise:CD0"]
+    )
     assert problem["data:aerodynamics:wing:cruise:CD0"] == pytest.approx(cd0_wing, abs=1e-5)
     assert problem["data:aerodynamics:fuselage:cruise:CD0"] == pytest.approx(cd0_fus, abs=1e-5)
     assert problem["data:aerodynamics:horizontal_tail:cruise:CD0"] == pytest.approx(
@@ -209,15 +226,7 @@ def cd0_high_speed(
     assert problem["data:aerodynamics:nacelles:cruise:CD0"] == pytest.approx(cd0_nac, abs=1e-5)
     assert problem["data:aerodynamics:landing_gear:cruise:CD0"] == pytest.approx(cd0_lg, abs=1e-5)
     assert problem["data:aerodynamics:other:cruise:CD0"] == pytest.approx(cd0_other, abs=1e-5)
-    cd0_total_cal = 1.25 * (
-        problem["data:aerodynamics:wing:cruise:CD0"]
-        + problem["data:aerodynamics:fuselage:cruise:CD0"]
-        + problem["data:aerodynamics:horizontal_tail:cruise:CD0"]
-        + problem["data:aerodynamics:vertical_tail:cruise:CD0"]
-        + problem["data:aerodynamics:nacelles:cruise:CD0"]
-        + problem["data:aerodynamics:landing_gear:cruise:CD0"]
-        + problem["data:aerodynamics:other:cruise:CD0"]
-    )
+
     assert cd0_total_cal == pytest.approx(cd0_total, abs=1e-5)
 
 

@@ -14,13 +14,13 @@
 import pytest
 import openmdao.api as om
 
+from fastga.models.handling_qualities.aircraft_modes_analysis import AircraftModesComputation
 from fastga.models.handling_qualities.lateral_directional_dynamics.lateral_directional_spacestate import \
     LateralDirectionalSpaceStateMatrix
-from fastga.models.handling_qualities.longitudinal_dynamics.dimensionless_longitudinal_spacestate import \
-    DimensionlessLongitudinalSpaceStateMatrix
+
 from fastga.models.handling_qualities.longitudinal_dynamics.longitudinal_modes import LongitudinalModes
-from fastga.models.handling_qualities.longitudinal_dynamics.longitudinal_modes_sympy import LongitudinalMatrixSymPy
 from fastga.models.handling_qualities.longitudinal_dynamics.longitudinal_spacestate import LongitudinalSpaceStateMatrix
+from fastga.models.handling_qualities.unitary_tests.test_functions import aircraft_modes
 from tests.testing_utilities import run_system, get_indep_var_comp, list_inputs
 
 def test_longitudinal_modes_one():
@@ -59,8 +59,8 @@ def test_longitudinal_modes_one():
     ivc.add_output("data:handling_qualities:longitudinal:derivatives:Cm:pitchrate", val=-12.4, units="rad**-1")
 
     # Run problem and check obtained value(s) is/(are) correct
-    # problem = run_system(LongitudinalSpaceStateMatrix(), ivc)
-    problem = run_system(LongitudinalMatrixSymPy(), ivc)
+    problem = run_system(LongitudinalSpaceStateMatrix(), ivc)
+    # problem = run_system(LongitudinalMatrixSymPy(), ivc)
     A = problem.get_val("data:handling_qualities:longitudinal:spacestate:matrixA", units="rad**-1")
     w = problem.get_val("data:handling_qualities:longitudinal:spacestate:eigenvalues")
 
@@ -153,6 +153,45 @@ def test_longitudinal_modes_three():
     w = problem.get_val("data:handling_qualities:longitudinal:spacestate:eigenvalues")
 
 
+def test_longitudinal_modes_four():
+    """
+    Data from: https://courses.cit.cornell.edu/mae5070/DynamicStability.pdf
+    """
+    ivc = om.IndepVarComp()
+    ivc.add_output("data:reference_flight_condition:CL", val=1.108)
+    ivc.add_output("data:reference_flight_condition:CD", val=0.102)
+    ivc.add_output("data:reference_flight_condition:CT", val=0.102)
+    ivc.add_output("data:reference_flight_condition:air_density", val=0.002377, units="slug/ft**3")
+    ivc.add_output("data:reference_flight_condition:theta", val=0.0, units="deg")
+    ivc.add_output("data:reference_flight_condition:weight", val=564032.0, units="lb")
+    ivc.add_output("data:reference_flight_condition:speed", val=279.1, units="ft/s")
+
+    ivc.add_output("data:geometry:wing:MAC:length", val=27.3, units="ft")
+    ivc.add_output("data:geometry:wing:area", val=5500, units="ft**2")
+
+    ivc.add_output("data:weight:aircraft:inertia:Ioy", val=32300000.0, units="slug*ft**2")
+
+    ivc.add_output("data:handling_qualities:longitudinal:derivatives:CL:speed", val=0.0)
+    ivc.add_output("data:handling_qualities:longitudinal:derivatives:CD:speed", val=0.20371)
+    ivc.add_output("data:handling_qualities:longitudinal:derivatives:Cm:speed", val=0.0)
+    ivc.add_output("data:handling_qualities:longitudinal:derivatives:thrust:CX:speed", val=0.0)
+    ivc.add_output("data:handling_qualities:longitudinal:derivatives:thrust:Cm:speed", val=0.0)
+
+    ivc.add_output("data:handling_qualities:longitudinal:derivatives:CD:alpha", val=0.66, units="rad**-1")
+    ivc.add_output("data:handling_qualities:longitudinal:derivatives:CL:alpha", val=5.7, units="rad**-1")
+    ivc.add_output("data:handling_qualities:longitudinal:derivatives:Cm:alpha", val=-1.26, units="rad**-1")
+    ivc.add_output("data:handling_qualities:longitudinal:derivatives:thrust:Cm:alpha", val=0.0, units="rad**-1")
+
+    ivc.add_output("data:handling_qualities:longitudinal:derivatives:CL:alpharate", val=6.7, units="rad**-1")
+    ivc.add_output("data:handling_qualities:longitudinal:derivatives:Cm:alpharate", val=-3.2, units="rad**-1")
+
+    ivc.add_output("data:handling_qualities:longitudinal:derivatives:CL:pitchrate", val=5.4, units="rad**-1")
+    ivc.add_output("data:handling_qualities:longitudinal:derivatives:Cm:pitchrate", val=-20.8, units="rad**-1")
+
+    # Run problem and check obtained value(s) is/(are) correct
+    problem = run_system(LongitudinalSpaceStateMatrix(), ivc)
+    A = problem.get_val("data:handling_qualities:longitudinal:spacestate:matrixA", units="rad**-1")
+    w = problem.get_val("data:handling_qualities:longitudinal:spacestate:eigenvalues")
 
 
 def test_lateral_directional_modes():
@@ -189,3 +228,57 @@ def test_lateral_directional_modes():
     problem = run_system(LateralDirectionalSpaceStateMatrix(), ivc)
     A = problem.get_val("data:handling_qualities:lateral:spacestate:matrixA", units="rad**-1")
     w = problem.get_val("data:handling_qualities:lateral:spacestate:eigenvalues")
+
+
+def test_lateral_directional_modes_two():
+    """
+    Data from: https://courses.cit.cornell.edu/mae5070/DynamicStability.pdf
+    """
+
+    ivc = om.IndepVarComp()
+    ivc.add_output("data:reference_flight_condition:CL", val=1.108)
+    ivc.add_output("data:reference_flight_condition:air_density", val=0.002377, units="slug/ft**3")
+    ivc.add_output("data:reference_flight_condition:theta", val=0.0, units="deg")
+    ivc.add_output("data:reference_flight_condition:weight", val=564032.0, units="lb")
+    ivc.add_output("data:reference_flight_condition:speed", val=279.1, units="ft/s")
+
+    ivc.add_output("data:geometry:wing:span", val=195.7, units="ft")
+    ivc.add_output("data:geometry:wing:area", val=5500.0, units="ft**2")
+
+    ivc.add_output("data:weight:aircraft:inertia:Iox", val=14300000.0, units="slug*ft**2")
+    ivc.add_output("data:weight:aircraft:inertia:Ioz", val=45300000, units="slug*ft**2")
+    ivc.add_output("data:weight:aircraft:inertia:Ioxz", val=-2230000, units="slug*ft**2")
+
+    ivc.add_output("data:handling_qualities:lateral:derivatives:CY:beta", val=-0.96, units="rad**-1")
+    ivc.add_output("data:handling_qualities:lateral:derivatives:CY:rollrate", val=0.0, units="rad**-1")
+    ivc.add_output("data:handling_qualities:lateral:derivatives:CY:yawrate", val=0.0, units="rad**-1")
+
+    ivc.add_output("data:handling_qualities:lateral:derivatives:Cl:beta", val=-0.221, units="rad**-1")
+    ivc.add_output("data:handling_qualities:lateral:derivatives:Cl:rollrate", val=-0.45, units="rad**-1")
+    ivc.add_output("data:handling_qualities:lateral:derivatives:Cl:yawrate", val=0.101, units="rad**-1")
+
+    ivc.add_output("data:handling_qualities:lateral:derivatives:Cn:beta", val=0.15, units="rad**-1")
+    ivc.add_output("data:handling_qualities:lateral:derivatives:Cn:rollrate", val=-0.121, units="rad**-1")
+    ivc.add_output("data:handling_qualities:lateral:derivatives:Cn:yawrate", val=-0.30, units="rad**-1")
+
+    # Run problem and check obtained value(s) is/(are) correct
+    problem = run_system(LateralDirectionalSpaceStateMatrix(), ivc)
+    A = problem.get_val("data:handling_qualities:lateral:spacestate:matrixA", units="rad**-1")
+    w = problem.get_val("data:handling_qualities:lateral:spacestate:eigenvalues")
+
+
+def test_aircraft_modes():
+    """
+    For testing the complete modes analysis, from calculating the stability derivatives until obtaining the modes
+    characteristics.
+    """
+
+    use_openvsp = True
+    add_fuselage = False
+    XML_FILE = "beechcraft_76.xml"
+
+    aircraft_modes(
+        use_openvsp,
+        add_fuselage,
+        XML_FILE
+    )
