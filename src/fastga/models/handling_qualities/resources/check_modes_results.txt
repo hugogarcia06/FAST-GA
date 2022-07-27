@@ -1,0 +1,40 @@
+### TEXT FILE TO COLLECT THE RESULT FROM THE CHECK MODES MODULE ###
+
+### LONGITUDINAL MODES ###
+## Phugoid ##
+real_part = ph_real_part
+imag_part = ph_imag_part
+damping_ratio = ph_damping_ratio
+satisfaction_level = ph_damping_level
+
+## Short Period ##
+real_part = sp_real_part
+imag_part = sp_imag_part
+damping_ratio = sp_damping_ratio
+satisfaction_level = sp_damping_level
+undamped_frequency = sp_undamped_frequency
+satisfaction_level = sp_frequency_level
+
+
+### LATERAL-DIRECTIONAL MODES ###
+## Dutch Roll ##
+real_part = dr_real_part
+imag_part - dr_imag_part
+damping_ratio = dr_damping_ratio
+satisfaction_level = dr_damping_level
+undamped_frequency = dr_undamped_frequency
+satisfaction_level = dr_frequency_level
+product = dr_product
+satisfaction_level = dr_product_level
+
+## ROLL ##
+real_part = roll_real_part
+imag_part - roll_imag_part
+time_constant = roll_time_constant
+satisfaction_level = roll_time_constant_level
+
+## SPIRAL ##
+real_part = spiral_real_part
+imag_part = spiral_imag_part
+time_to_double = spiral_time_to_double
+satisfaction_level = spiral_time_to_double_level
