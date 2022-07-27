@@ -36,26 +36,25 @@ class LongitudinalSpaceStateMatrix(om.ExplicitComponent):
         self.add_input("data:reference_flight_condition:air_density", val=np.nan, units="slug/ft**3")
         self.add_input("data:reference_flight_condition:theta", val=np.nan, units="deg")
         self.add_input("data:reference_flight_condition:weight", val=np.nan, units="slug")
+        self.add_input("data:reference_flight_condition:Iyy", val=np.nan, units="slug*ft**2")
         self.add_input("data:reference_flight_condition:speed", val=np.nan, units="ft/s")
 
         self.add_input("data:geometry:wing:MAC:length", val=np.nan, units="ft")
         self.add_input("data:geometry:wing:area", val=np.nan, units="ft**2")
 
-        self.add_input("data:weight:aircraft:inertia:Ioy", val=np.nan, units="slug*ft**2")
-
         self.add_input("data:handling_qualities:longitudinal:derivatives:CL:speed", val=np.nan)
         self.add_input("data:handling_qualities:longitudinal:derivatives:CD:speed", val=np.nan)
         self.add_input("data:handling_qualities:longitudinal:derivatives:Cm:speed", val=np.nan)
-        self.add_input("data:handling_qualities:longitudinal:derivatives:thrust:CX:speed", val=np.nan)
-        self.add_input("data:handling_qualities:longitudinal:derivatives:thrust:Cm:speed", val=np.nan)
+        self.add_input("data:handling_qualities:longitudinal:derivatives:thrust:CX:speed", val=0.0)
+        self.add_input("data:handling_qualities:longitudinal:derivatives:thrust:Cm:speed", val=0.0)
 
         self.add_input("data:handling_qualities:longitudinal:derivatives:CD:alpha", val=np.nan, units="rad**-1")
         self.add_input("data:handling_qualities:longitudinal:derivatives:CL:alpha", val=np.nan, units="rad**-1")
         self.add_input("data:handling_qualities:longitudinal:derivatives:Cm:alpha", val=np.nan, units="rad**-1")
-        self.add_input("data:handling_qualities:longitudinal:derivatives:thrust:Cm:alpha", val=np.nan, units="rad**-1")
+        self.add_input("data:handling_qualities:longitudinal:derivatives:thrust:Cm:alpha", val=0.0, units="rad**-1")
 
-        self.add_input("data:handling_qualities:longitudinal:derivatives:CL:alpharate", val=np.nan, units="rad**-1")
-        self.add_input("data:handling_qualities:longitudinal:derivatives:Cm:alpharate", val=np.nan, units="rad**-1")
+        self.add_input("data:handling_qualities:longitudinal:derivatives:CL:alpharate", val=0.0, units="rad**-1")
+        self.add_input("data:handling_qualities:longitudinal:derivatives:Cm:alpharate", val=0.0, units="rad**-1")
 
         self.add_input("data:handling_qualities:longitudinal:derivatives:CL:pitchrate", val=np.nan, units="rad**-1")
         self.add_input("data:handling_qualities:longitudinal:derivatives:Cm:pitchrate", val=np.nan, units="rad**-1")
@@ -92,7 +91,7 @@ class LongitudinalSpaceStateMatrix(om.ExplicitComponent):
         c = inputs["data:geometry:wing:MAC:length"]
 
         # Mass and moments of inertia parameters:
-        Iyy = inputs["data:weight:aircraft:inertia:Ioy"]
+        Iyy = inputs["data:reference_flight_condition:Iyy"]
 
         ###### SPEED DERIVATIVES ######
         # Aerodynamics

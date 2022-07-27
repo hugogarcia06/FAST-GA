@@ -16,6 +16,9 @@
 <FASTOAD_model>
     <data>
         <geometry>
+            <aircraft>
+                <class is_input="False">1.0<!--aircraft class according to handling qualities regulation--></class>
+            </aircraft>
             <has_T_tail is_input="True">0.0<!--0=horizontal tail is attached to fuselage / 1=horizontal tail is attached to top of vertical tail--></has_T_tail>
             <fuselage>
                 <maximum_height units="ft" is_input="False">4.5<!--maximum fuselage height--></maximum_height>
@@ -37,7 +40,7 @@
                 <wet_area units="ft**2" is_input="False">323.2326<!--wet area of wing--></wet_area>
                 <thickness_ratio is_input="True">0.12<!--thickness ratio of horizontal tail--></thickness_ratio>
                 <MAC>
-                    <length units="ft" is_input="False">4.3236<!--length of mean aerodynamic chord of wing--></length>
+                    <length units="ft" is_input="False">4.9<!--length of mean aerodynamic chord of wing--></length>
                     <y units="ft" is_input="False">7.81<!--Y-position of mean aerodynamic chord of horizontal tail--></y>
                     <at25percent>
                         <x units="ft" is_input="False">3.1135<!--X-position of the 25% of mean aerodynamic chord of wing w.r.t. aircraft nose (drives position of wing along fuselage)--></x>
@@ -117,6 +120,7 @@
                     <at25percent>
                         <x>
                            <from_wingMAC25 units="ft" is_input="False">15.3<!--distance along X between 25% MAC of wing and 25% MAC of vertical tail--></from_wingMAC25>
+                           <local units="ft" is_input="False">2.53<!--X-position of the 25% of mean aerodynamic chord of horizontal tail w.r.t. leading edge of root chord--></local>
                         </x>
                     </at25percent>
                 </MAC>
@@ -153,7 +157,7 @@
             </cruise>
             <aircraft>
                 <cruise>
-                    <CD0 is_input="False">0.020994707503136752<!--profile drag coefficient for whole aircraft w.r.t. data:aerodynamics:aircraft:cruise:CL--></CD0>
+                    <CD0 is_input="False">0.0270<!--profile drag coefficient for whole aircraft w.r.t. data:aerodynamics:aircraft:cruise:CL--></CD0>
                 </cruise>
             </aircraft>
             <fuselage>
@@ -179,6 +183,27 @@
                 </airfoil>
             </vertical_tail>
         </aerodynamics>
+        <weight>
+            <aircraft>
+                <MTOW units="kg" is_input="False">1338.097<!--maximum takeoff weight--></MTOW>
+                <MLW units="kg" is_input="False">1338.097<!--maximum landing weight--></MLW>
+                <OWE units="kg" is_input="False">780.1789<!--Mass of aircraft--></OWE>
+                <inertia>
+                    <Iox units="kg*m**2" is_input="False">1285.315464<!--moment of inertia around aircraft x-axis--></Iox>
+                    <Ioy units="kg*m**2" is_input="False">1824.931028<!--moment of inertia around aircraft y-axis--></Ioy>
+                    <Ioz units="kg*m**2" is_input="False">2666.894006<!--moment of inertia around aircraft z-axis--></Ioz>
+                    <Ioxz units="kg*m**2" is_input="False">0.0<!--product of inertia--></Ioxz>
+                </inertia>
+                <CG>
+                    <aft>
+                        <x units="m" is_input="False">2.622<!--most aft X-position of aircraft center of gravity--></x>
+                    </aft>
+                    <fwd>
+                        <x units="m" is_input="False">2.2282<!--most aft X-position of aircraft center of gravity--></x>
+                    </fwd>
+                </CG>
+            </aircraft>
+        </weight>
     </data>
 </FASTOAD_model>
 

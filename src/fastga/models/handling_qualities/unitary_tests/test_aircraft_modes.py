@@ -11,17 +11,14 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import pytest
 import openmdao.api as om
 
-from fastga.models.handling_qualities.aircraft_modes_analysis import AircraftModesComputation
-from fastga.models.handling_qualities.lateral_directional_dynamics.lateral_directional_spacestate import \
+from fastga.models.handling_qualities.aircraft_modes.lateral_directional_spacestate import \
     LateralDirectionalSpaceStateMatrix
-
-from fastga.models.handling_qualities.longitudinal_dynamics.longitudinal_modes import LongitudinalModes
-from fastga.models.handling_qualities.longitudinal_dynamics.longitudinal_spacestate import LongitudinalSpaceStateMatrix
+from fastga.models.handling_qualities.aircraft_modes.longitudinal_spacestate import LongitudinalSpaceStateMatrix
 from fastga.models.handling_qualities.unitary_tests.test_functions import aircraft_modes
-from tests.testing_utilities import run_system, get_indep_var_comp, list_inputs
+from tests.testing_utilities import run_system
+
 
 def test_longitudinal_modes_one():
     """
@@ -190,8 +187,6 @@ def test_longitudinal_modes_four():
 
     # Run problem and check obtained value(s) is/(are) correct
     problem = run_system(LongitudinalSpaceStateMatrix(), ivc)
-    A = problem.get_val("data:handling_qualities:longitudinal:spacestate:matrixA", units="rad**-1")
-    w = problem.get_val("data:handling_qualities:longitudinal:spacestate:eigenvalues")
 
 
 def test_lateral_directional_modes():

@@ -24,7 +24,7 @@ from fastga.models.handling_qualities.stability_derivatives.lateral_directional.
 from fastga.models.handling_qualities.stability_derivatives.lateral_directional.components.vertical_tail.cl_yawrate_vt import \
     ClYawRateVT
 from fastga.models.handling_qualities.stability_derivatives.lateral_directional.components.vertical_tail.cn_beta_vt import CnBetaVT
-from fastga.models.handling_qualities.lateral_directional_dynamics import \
+from fastga.models.handling_qualities.stability_derivatives.lateral_directional.components.vertical_tail.cn_rollrate_vt import \
     CnRollRateVT
 from fastga.models.handling_qualities.stability_derivatives.lateral_directional.components.vertical_tail.cn_yawrate_vt import \
     CnYawRateVT

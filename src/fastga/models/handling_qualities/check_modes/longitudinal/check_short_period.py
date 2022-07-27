@@ -11,14 +11,19 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import math
+import os
 import logging
 import os.path as pth
+
+from openmdao.utils.file_wrap import InputFileGenerator
 from pandas import read_csv
 from scipy import interpolate
+from ... import resources as local_resources
 
 import openmdao.api as om
 import numpy as np
 import matplotlib.pyplot as plt
+from importlib.resources import path
 
 from fastga.models.handling_qualities.resources import digit_figures
 
@@ -29,6 +34,8 @@ class CheckShortPeriod(om.ExplicitComponent):
     """
     # TODOC:
     """
+    def initialize(self):
+        self.options.declare("result_folder_path", default="", types=str)
 
     def setup(self):
         self.add_input("data:reference_flight_condition:dynamic_pressure", val=np.nan, units="Pa")
@@ -47,6 +54,8 @@ class CheckShortPeriod(om.ExplicitComponent):
             "data:handling_qualities:longitudinal:modes:short_period:check:undamped_frequency:satisfaction_level")
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
+
+        results_folder_path = self.options["result_folder_path"]
 
         real_sp = inputs["data:handling_qualities:longitudinal:modes:short_period:real_part"]
         imag_sp = inputs["data:handling_qualities:longitudinal:modes:short_period:imag_part"]
@@ -98,6 +107,7 @@ class CheckShortPeriod(om.ExplicitComponent):
         level2_down_x = level2_down_x[np.logical_not(errors)].tolist()
         level2_down_y = level2_down_y[np.logical_not(errors)].tolist()
 
+        # fig1, ax1 = plt.subplots(figsize=(11.2, 8.4))
         fig1, ax1 = plt.subplots()
         ax1.set_yscale('log')
         ax1.set_xscale('log')
@@ -112,13 +122,25 @@ class CheckShortPeriod(om.ExplicitComponent):
         ax1.plot(level2_up_x, level2_up_y, linestyle="--", color="orange", label="Level 2")
         ax1.plot(level2_down_x, level2_down_y, linestyle="--", color="yellow", label="Level 2 & 3")
         ax1.legend(loc="upper right")
-        ax1.set_xbound(1.0, 100)
-        ax1.set_ybound(0.1, 100.0)
+        ax1.set_xbound(1.0, 1000.0)
+        ax1.set_ybound(0.1, 1000.0)
         # plt.show()
 
-        ### s-plane plot ###
-        self.plot_s_plane(real_sp, imag_sp, z_sp_reqs, wn_sp_reqs)
+        results_dir = results_folder_path
+        plots_dir = os.path.join(results_dir, 'Check Modes Plots/')
+        plot_name = "short_period_frequency_requirement.png"
 
+        if not os.path.isdir(plots_dir):
+            os.makedirs(plots_dir)
+
+        fig1.savefig(plots_dir + plot_name)
+
+        ### s-plane plot ###
+        self.plot_s_plane(real_sp, imag_sp, z_sp_reqs, wn_sp_reqs, results_folder_path)
+
+        ### write results ###
+        self.write_results(
+            real_sp, imag_sp, z_sp, wn_sp, check_shortperiod_damping, check_shortperiod_frequency, results_folder_path)
 
         outputs[
             "data:handling_qualities:longitudinal:modes:short_period:check:damping_ratio:satisfaction_level"
@@ -244,17 +266,17 @@ class CheckShortPeriod(om.ExplicitComponent):
 
         check_shortperiod_frequency = 0.0
         if wn_sp_min_req_1 <= wn_sp <= wn_sp_max_req_1:
-            check_shortperiod_damping = 1.0
+            check_shortperiod_frequency = 1.0
         elif wn_sp_min_req_2 <= wn_sp <= wn_sp_max_req_2:
-            check_shortperiod_damping = 2.0
+            check_shortperiod_frequency = 2.0
         elif wn_sp_min_req_3 <= wn_sp:
-            check_shortperiod_damping = 3.0
+            check_shortperiod_frequency = 3.0
 
         return check_shortperiod_damping, check_shortperiod_frequency
 
 
     @staticmethod
-    def plot_s_plane(real_sp, imag_sp, z_sp_reqs, wn_sp_reqs):
+    def plot_s_plane(real_sp, imag_sp, z_sp_reqs, wn_sp_reqs, results_folder_path):
 
         def get_damping_limits(damping_ratio):
             if damping_ratio == 0.0:
@@ -291,6 +313,7 @@ class CheckShortPeriod(om.ExplicitComponent):
         wn_sp_max_req_2 = wn_sp_reqs[3]
         wn_sp_min_req_3 = wn_sp_reqs[4]
 
+        # fig2, ax2 = plt.subplots(figsize=(11.2, 8.4))
         fig2, ax2 = plt.subplots()
         ax2.set_title("Check of Short Period Characteristics Versus Flying Quality Requirements")
         ax2.set_xlabel(r"$n$")
@@ -306,35 +329,46 @@ class CheckShortPeriod(om.ExplicitComponent):
         # Damping ratio limits
         # Level 1
         x_damp_min_1, y_damp_min_1 = get_damping_limits(z_sp_min_req_1)
-        ax2.plot(x_damp_min_1, y_damp_min_1, linestyle="--", color="red", label="Level 1")
+        ax2.plot(x_damp_min_1, y_damp_min_1, linestyle="dashdot", color="red", label="Level 1")
         x_damp_max_1, y_damp_max_1 = get_damping_limits(z_sp_max_req_1)
-        ax2.plot(x_damp_max_1, y_damp_max_1, linestyle="--", color="red", label="")
+        ax2.plot(x_damp_max_1, y_damp_max_1, linestyle="dashdot", color="red", label="")
         # Level 2
         x_damp_min_2, y_damp_min_2 = get_damping_limits(z_sp_min_req_2)
-        ax2.plot(x_damp_min_2, y_damp_min_2, linestyle="--", color="orange", label="Level 2")
+        ax2.plot(x_damp_min_2, y_damp_min_2, linestyle="dashdot", color="orange", label="Level 2")
         # x_damp_max_2, y_damp_max_2 = get_damping_limits(z_sp_max_req_2)
         # ax2.plot(x_damp_max_2, y_damp_max_2, linestyle="--", color="orange", label="")
         # Level 3
         x_damp_min_3, y_damp_min_3 = get_damping_limits(z_sp_min_req_3)
-        ax2.plot(x_damp_min_3, y_damp_min_3, linestyle="--", color="yellow", label="Level 3")
+        ax2.plot(x_damp_min_3, y_damp_min_3, linestyle="dashdot", color="yellow", label="Level 3")
 
         # Frequency limits
         # Level 1
         x_freq_min_1, y_freq_min_1 = get_frequency_limits(wn_sp_min_req_1)
-        ax2.plot(x_freq_min_1, y_freq_min_1, linestyle="--", color="red", label="")
+        ax2.plot(x_freq_min_1, y_freq_min_1, linestyle="--", color="red", label="Level 1")
         x_freq_max_1, y_freq_max_1 = get_frequency_limits(wn_sp_max_req_1)
         ax2.plot(x_freq_max_1, y_freq_max_1, linestyle="--", color="red", label="")
 
         # Level 2
         x_freq_min_2, y_freq_min_2 = get_frequency_limits(wn_sp_min_req_2)
-        ax2.plot(x_freq_min_2, y_freq_min_2, linestyle="--", color="yellow", label="Level 2")
+        ax2.plot(x_freq_min_2, y_freq_min_2, linestyle="--", color="yellow", label="Level 2 & 3")
         x_freq_max_2, y_freq_max_2 = get_frequency_limits(wn_sp_max_req_2)
-        ax2.plot(x_freq_max_2, y_freq_max_2, linestyle="--", color="orange", label="")
+        ax2.plot(x_freq_max_2, y_freq_max_2, linestyle="--", color="orange", label="Level 2")
 
         ax2.legend(loc="upper right")
         ax2.set_xbound(real_sp * 3, 0.1)
         ax2.set_ybound(-imag_sp, imag_sp * 4)
-        plt.show()
+        ax2.set_xbound(-20.0, 4.0)
+        ax2.set_ybound(-4.0, 20.0)
+        # plt.show()
+
+        results_dir = results_folder_path
+        plots_dir = os.path.join(results_dir, 'Check Modes Plots/')
+        plot_name = "short_period_s-plane.png"
+
+        if not os.path.isdir(plots_dir):
+            os.makedirs(plots_dir)
+
+        fig2.savefig(plots_dir + plot_name)
 
 
     @staticmethod
@@ -346,4 +380,35 @@ class CheckShortPeriod(om.ExplicitComponent):
         y = wn * np.sin(angle)
 
         return x, y
+
+
+    @staticmethod
+    def write_results(real_part, imag_part, damping_ratio,
+                      undamped_frequency, check_short_period_damping, check_short_period_frequency, results_folder_path):
+
+        file_name = "check_modes_results_sp.txt"
+        resources_directory = "C:/Users/hugog/OneDrive/Escritorio/FAST-GA/src/fastga/models/handling_qualities/resources"
+        saving_directory = os.path.join(resources_directory, file_name)
+
+        parser = InputFileGenerator()
+        with path(local_resources, "check_modes_results_ph.txt") as input_template_path:
+            parser.set_template_file(str(input_template_path))
+            parser.set_generated_file(saving_directory)
+            parser.mark_anchor("sp_real_part")
+            parser.transfer_var(round(float(real_part), 5), 0, 3)
+            parser.mark_anchor("sp_imag_part")
+            parser.transfer_var(round(float(imag_part), 5), 0, 3)
+            parser.mark_anchor("sp_damping_ratio")
+            parser.transfer_var(round(float(damping_ratio), 5), 0, 3)
+            parser.mark_anchor("sp_damping_level")
+            parser.transfer_var(round(float(check_short_period_damping), 5), 0, 3)
+            parser.mark_anchor("sp_undamped_frequency")
+            parser.transfer_var(round(float(undamped_frequency), 5), 0, 3)
+            parser.mark_anchor("sp_frequency_level")
+            parser.transfer_var(round(float(check_short_period_frequency), 5), 0, 3)
+            parser.generate()
+
+        os.remove(
+            os.path.join(resources_directory, "check_modes_results_ph.txt")
+        )
 

@@ -20,6 +20,9 @@ import os
 import os.path as pth
 import pytest
 import numpy as np
+import math
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 
 from importlib.resources import path
 
@@ -31,14 +34,16 @@ from tempfile import TemporaryDirectory
 
 from openmdao.utils.file_wrap import InputFileGenerator
 
-from fastga.models.handling_qualities.external.openvsp.compute_stab import ComputeSTABopenvsp
-from fastga.models.handling_qualities.stability_derivatives import StabilityDerivatives
+from fastga.models.handling_qualities.stability_derivatives.external.openvsp.compute_stab import ComputeSTABopenvsp
 from tests.testing_utilities import run_system, get_indep_var_comp, list_inputs
 from tests.xfoil_exe.get_xfoil import get_xfoil_path
 
 from fastga.models.aerodynamics.external.xfoil import resources
-from ..aircraft_modes_analysis import AircraftModesComputation, AircraftModesAnalysis
-from ..longitudinal_dynamics.compute_longitudinal_derivatives import ComputeLongitudinalDerivatives
+from fastga.models.handling_qualities.aircraft_modes.aircraft_modes_computation import AircraftModesComputation
+from ..check_modes.aircraft_modes_analysis import AircraftModesAnalysis
+from ..check_modes.lateral_directional.check_dutch_roll import CheckDutchRoll
+from ..check_modes.longitudinal.check_short_period import CheckShortPeriod
+from ..stability_derivatives.stability_derivatives import StabilityDerivatives
 
 RESULTS_FOLDER = pth.join(pth.dirname(__file__), "results")
 TMP_SAVE_FOLDER = "test_save"
@@ -278,6 +283,7 @@ def stability(
     # noinspection PyTypeChecker
     ivc = get_indep_var_comp(
         list_inputs(StabilityDerivatives(
+            airplane_file=XML_FILE,
             result_folder_path=results_folder.name,
             add_fuselage=add_fuselage,
             use_openvsp=use_openvsp
@@ -289,6 +295,7 @@ def stability(
     # noinspection PyTypeChecker
     problem = run_system(
         StabilityDerivatives(
+            airplane_file=XML_FILE,
             result_folder_path=results_folder.name,
             add_fuselage=add_fuselage,
             use_openvsp=use_openvsp
@@ -302,6 +309,7 @@ def stability(
     # noinspection PyTypeChecker
     run_system(
         StabilityDerivatives(
+            airplane_file=XML_FILE,
             result_folder_path=results_folder.name,
             add_fuselage=add_fuselage,
             use_openvsp=use_openvsp
@@ -445,6 +453,8 @@ def aircraft_modes(add_fuselage, use_openvsp, XML_FILE):
 
     ivc = get_indep_var_comp(
         list_inputs(AircraftModesComputation(
+            airplane_file=XML_FILE,
+            plot_modes=True,
             result_folder_path=results_folder.name,
             add_fuselage=add_fuselage,
             use_openvsp=use_openvsp
@@ -453,6 +463,8 @@ def aircraft_modes(add_fuselage, use_openvsp, XML_FILE):
 
     problem = run_system(
         AircraftModesComputation(
+            airplane_file=XML_FILE,
+            plot_modes=True,
             result_folder_path=results_folder.name,
             add_fuselage=add_fuselage,
             use_openvsp=use_openvsp
@@ -462,6 +474,18 @@ def aircraft_modes(add_fuselage, use_openvsp, XML_FILE):
     # Retrieve polar results from temporary folder
     polar_result_retrieve(tmp_folder)
 
+    # Copy temporary folder into Stage DCAS / Results
+    original = results_folder.name
+    target = "C:/Users/hugog/OneDrive - Universidad Politécnica de Madrid/GoodNotes 5/Máster Ingeniería Aeroespacial (MUIA)/2º MUIA (SUPAERO)/2º Sem/Stage DCAS/RESULTS/Aircraft Modes"
+    if XML_FILE == "beechcraft_76.xml":
+        target = "C:/Users/hugog/OneDrive - Universidad Politécnica de Madrid/GoodNotes 5/Máster Ingeniería Aeroespacial (MUIA)/2º MUIA (SUPAERO)/2º Sem/Stage DCAS/RESULTS/Beechcraft 76/Aircraft Modes"
+    elif XML_FILE == "cirrus_sr22.xml":
+        target = "C:/Users/hugog/OneDrive - Universidad Politécnica de Madrid/GoodNotes 5/Máster Ingeniería Aeroespacial (MUIA)/2º MUIA (SUPAERO)/2º Sem/Stage DCAS/RESULTS/Cirrus SR22/Aircraft Modes"
+    elif XML_FILE == "cessna_182.xml":
+        target = "C:/Users/hugog/OneDrive - Universidad Politécnica de Madrid/GoodNotes 5/Máster Ingeniería Aeroespacial (MUIA)/2º MUIA (SUPAERO)/2º Sem/Stage DCAS/RESULTS/Cessna 182/Aircraft Modes"
+
+    shutil.move(original, target)
+
     # Remove existing result files
     results_folder.cleanup()
 
@@ -470,7 +494,6 @@ def aircraft_modes(add_fuselage, use_openvsp, XML_FILE):
 
 
 def check_aircraft_modes(add_fuselage, use_openvsp, XML_FILE):
-
     # Create result temporary directory
     results_folder = _create_tmp_directory()
 
@@ -479,11 +502,50 @@ def check_aircraft_modes(add_fuselage, use_openvsp, XML_FILE):
 
     ivc = get_indep_var_comp(
         list_inputs(AircraftModesAnalysis(
+            airplane_file=XML_FILE,
             result_folder_path=results_folder.name,
             add_fuselage=add_fuselage,
             use_openvsp=use_openvsp
         )), __file__, XML_FILE
     )
+
+    problem = run_system(
+        AircraftModesAnalysis(
+            airplane_file=XML_FILE,
+            result_folder_path=results_folder.name,
+            add_fuselage=add_fuselage,
+            use_openvsp=use_openvsp
+        ), ivc
+    )
+
+    # Retrieve polar results from temporary folder
+    polar_result_retrieve(tmp_folder)
+
+    # Copy temporary folder into Stage DCAS / Results
+    original = results_folder.name
+    target = "C:/Users/hugog/OneDrive - Universidad Politécnica de Madrid/GoodNotes 5/Máster Ingeniería Aeroespacial (MUIA)/2º MUIA (SUPAERO)/2º Sem/Stage DCAS/RESULTS/Check Modes"
+    if XML_FILE == "beechcraft_76.xml":
+        target = "C:/Users/hugog/OneDrive - Universidad Politécnica de Madrid/GoodNotes 5/Máster Ingeniería Aeroespacial (MUIA)/2º MUIA (SUPAERO)/2º Sem/Stage DCAS/RESULTS/Beechcraft 76/Check Modes"
+    elif XML_FILE == "cirrus_sr22.xml":
+        target = "C:/Users/hugog/OneDrive - Universidad Politécnica de Madrid/GoodNotes 5/Máster Ingeniería Aeroespacial (MUIA)/2º MUIA (SUPAERO)/2º Sem/Stage DCAS/RESULTS/Cirrus SR22/Check Modes"
+    elif XML_FILE == "cessna_182.xml":
+        target = "C:/Users/hugog/OneDrive - Universidad Politécnica de Madrid/GoodNotes 5/Máster Ingeniería Aeroespacial (MUIA)/2º MUIA (SUPAERO)/2º Sem/Stage DCAS/RESULTS/Cessna 182/Check Modes"
+
+    shutil.move(original, target)
+
+    # Remove existing result files
+    results_folder.cleanup()
+
+    damp_ph = problem.get_val("data:handling_qualities:longitudinal:modes:phugoid:damping_ratio")
+    wn_ph = problem.get_val("data:handling_qualities:longitudinal:modes:phugoid:undamped_frequency", units="s**-1")
+
+
+def check_aircraft_modes_modified(add_fuselage, use_openvsp, XML_FILE, ivc):
+    # Create result temporary directory
+    results_folder = _create_tmp_directory()
+
+    # Transfer saved polar results to temporary folder
+    tmp_folder = polar_result_transfer()
 
     problem = run_system(
         AircraftModesAnalysis(
@@ -496,9 +558,497 @@ def check_aircraft_modes(add_fuselage, use_openvsp, XML_FILE):
     # Retrieve polar results from temporary folder
     polar_result_retrieve(tmp_folder)
 
+    # Copy temporary folder into Stage DCAS / Results
+    original = results_folder.name
+    target = "C:/Users/hugog/OneDrive - Universidad Politécnica de Madrid/GoodNotes 5/Máster Ingeniería Aeroespacial (MUIA)/2º MUIA (SUPAERO)/2º Sem/Stage DCAS/RESULTS"
+    if XML_FILE == "beechcraft_76.xml":
+        target = "C:/Users/hugog/OneDrive - Universidad Politécnica de Madrid/GoodNotes 5/Máster Ingeniería Aeroespacial (MUIA)/2º MUIA (SUPAERO)/2º Sem/Stage DCAS/RESULTS/Beechcraft 76"
+    elif XML_FILE == "cirrus_sr22.xml":
+        target = "C:/Users/hugog/OneDrive - Universidad Politécnica de Madrid/GoodNotes 5/Máster Ingeniería Aeroespacial (MUIA)/2º MUIA (SUPAERO)/2º Sem/Stage DCAS/RESULTS/Cirrus SR22"
+    elif XML_FILE == "cessna_182.xml":
+        target = "C:/Users/hugog/OneDrive - Universidad Politécnica de Madrid/GoodNotes 5/Máster Ingeniería Aeroespacial (MUIA)/2º MUIA (SUPAERO)/2º Sem/Stage DCAS/RESULTS/Cessna 182"
+
+    shutil.move(original, target)
+
     # Remove existing result files
     results_folder.cleanup()
 
     damp_ph = problem.get_val("data:handling_qualities:longitudinal:modes:phugoid:damping_ratio")
     wn_ph = problem.get_val("data:handling_qualities:longitudinal:modes:phugoid:undamped_frequency", units="s**-1")
+
+
+def dynamic_tail_sizing_loop(add_fuselage, use_openvsp, XML_FILE):
+    # Create result temporary directory
+    results_folder = _create_tmp_directory()
+
+    ht_area_original = 2.67406   # in square meters
+    ht_areas = [ht_area_original*0.75, ht_area_original*0.9, ht_area_original, ht_area_original*1.1, ht_area_original*1.25, ht_area_original*1.5]
+
+    sp_real_parts = []
+    sp_imag_parts = []
+    x_cg = 0.0
+    for ht_area in ht_areas:
+
+        ivc = get_indep_var_comp(
+            list_inputs(AircraftModesComputation(
+                result_folder_path=results_folder.name,
+                add_fuselage=add_fuselage,
+                use_openvsp=use_openvsp
+            )), __file__, XML_FILE
+        )
+        ivc.add_output("data:geometry:horizontal_tail:area", val=ht_area, units="m**2")
+
+        problem = run_system(
+            AircraftModesComputation(
+                result_folder_path=results_folder.name,
+                add_fuselage=add_fuselage,
+                use_openvsp=use_openvsp
+            ), ivc
+        )
+
+        x_cg = problem.get_val("data:reference_flight_condition:CG:x")
+        real_sp = problem.get_val("data:handling_qualities:longitudinal:modes:short_period:real_part")
+        imag_sp = problem.get_val("data:handling_qualities:longitudinal:modes:short_period:imag_part")
+
+        sp_real_parts.append(real_sp)
+        sp_imag_parts.append(imag_sp)
+
+
+    ### PLOT ###
+    fig, ax = plt.subplots()
+    ax.set_title("Short Period Eigenvalues for different HT Areas for $X_{CG} = %s $" % float(x_cg))
+    ax.set_xlabel(r"$n$")
+    ax.set_ylabel(r"$jw$")
+    ax.grid(visible=True, which="both")
+    # x-axis
+    ax.plot(np.linspace(-10, 10, 1000), 0.0 * np.linspace(-10, 10, 1000), color="black")
+    # y-axis
+    ax.plot(0.0 * np.linspace(-10, 10, 1000), np.linspace(-10, 10, 1000), color="black")
+
+    for i in range(len(ht_areas)):
+
+        label = r"$S_{HTP} = $" + str(ht_areas[i])
+        ax.scatter(sp_real_parts[i], sp_imag_parts[i], label=label)
+
+    ax.legend(loc="upper right")
+    min_real_parts = min(sp_real_parts)
+    max_real_parts = max(sp_real_parts)
+    max_imag_parts = max(sp_imag_parts)
+    ax.set_xbound(min_real_parts * 1.25, max(abs(max_real_parts), 1.0) * 1.5)
+    ax.set_ybound(-0.1, max_imag_parts * 1.5)
+    plt.show()
+
+    results_dir = results_folder.name
+    plot_name = "sp_eigenvalues_variation.png"
+
+    if not os.path.isdir(results_dir):
+        os.makedirs(results_dir)
+
+    fig.savefig(results_dir + plot_name)
+
+    # Copy temporary folder into Stage DCAS / Results
+    original = results_folder.name
+    target = "C:/Users/hugog/OneDrive - Universidad Politécnica de Madrid/GoodNotes 5/Máster Ingeniería Aeroespacial (MUIA)/2º MUIA (SUPAERO)/2º Sem/Stage DCAS/RESULTS/Dynamic Tail Sizing"
+
+    shutil.move(original, target)
+
+    # Remove existing result files
+    results_folder.cleanup()
+
+
+def short_period_tail_sizing(add_fuselage, use_openvsp, XML_FILE, XML_OPTIM_FILE):
+    def get_damping_limits(damping_ratio):
+        if damping_ratio == 0.0:
+            x = np.linspace(-100, 0.0, 100) * 0.0
+            y = np.linspace(-100, 0.0, 100)
+        elif damping_ratio == 1.0 or damping_ratio > 1.0:
+            x = np.linspace(-100, 0.0, 100)
+            y = np.linspace(-100, 0.0, 100) * 0.0
+        else:
+            phi = math.asin(damping_ratio)
+            phi = math.pi / 2 - phi
+            x = np.linspace(-100, 0.0, 100)
+            y = math.tan(-phi) * x
+
+        return x, y
+
+    def get_frequency_limits(wn):
+        angle = np.linspace(math.pi, math.pi / 2.0, 100)
+
+        x = wn * np.cos(angle)
+        y = wn * np.sin(angle)
+
+        return x, y
+
+    # Create result temporary directory
+    results_folder = _create_tmp_directory()
+
+    # First we give default reference flight conditions
+    ref_flight_condition_dict = {}
+
+    ivc = get_indep_var_comp(
+        list_inputs(AircraftModesComputation(
+            airplane_file=XML_FILE,
+            reference_flight_condition=ref_flight_condition_dict,
+            result_folder_path=results_folder.name,
+            add_fuselage=add_fuselage,
+            use_openvsp=use_openvsp
+        )), __file__, XML_FILE
+    )
+
+    problem = run_system(
+        AircraftModesComputation(
+            airplane_file=XML_FILE,
+            reference_flight_condition=ref_flight_condition_dict,
+            result_folder_path=results_folder.name,
+            add_fuselage=add_fuselage,
+            use_openvsp=use_openvsp
+        ), ivc
+    )
+
+    cg_aft = problem.get_val("data:weight:aircraft:CG:aft:x")
+    cg_fwd = problem.get_val("data:weight:aircraft:CG:fwd:x")
+
+    # cg_x_positions = np.linspace(cg_fwd, cg_aft, 5)
+    cg_x_positions = np.linspace(3.474, 3.474, 1)
+    # ht_areas = np.linspace(2.0, 6.0, 6)
+    ht_areas = np.linspace(2.5, 3.7, 10)
+
+    sp_real_parts = []
+    sp_imag_parts = []
+
+    for cg_x in cg_x_positions:
+
+        ref_flight_condition_dict = {
+            "mach": 0.201,
+            "altitude": 5000.0,
+            "theta": 0.0,
+            "weight": 1450.0,
+            "cg_x": cg_x,
+        }
+
+        area_real_parts = []
+        area_imag_parts = []
+
+        for ht_area in ht_areas:
+
+            ivc = get_indep_var_comp(
+                list_inputs(AircraftModesComputation(
+                    airplane_file=XML_OPTIM_FILE,
+                    result_folder_path=results_folder.name,
+                    reference_flight_condition=ref_flight_condition_dict,
+                    add_fuselage=add_fuselage,
+                    use_openvsp=use_openvsp
+                )), __file__, XML_OPTIM_FILE
+            )
+            ivc.add_output("data:geometry:horizontal_tail:area", val=ht_area, units="m**2")
+
+            problem = run_system(
+                AircraftModesComputation(
+                    airplane_file=XML_OPTIM_FILE,
+                    result_folder_path=results_folder.name,
+                    reference_flight_condition=ref_flight_condition_dict,
+                    add_fuselage=add_fuselage,
+                    use_openvsp=use_openvsp
+                ), ivc
+            )
+
+            real_sp = problem.get_val("data:handling_qualities:longitudinal:modes:short_period:real_part")
+            imag_sp = problem.get_val("data:handling_qualities:longitudinal:modes:short_period:imag_part")
+
+            area_real_parts.append(real_sp)
+            area_imag_parts.append(imag_sp)
+
+        sp_real_parts.append(area_real_parts)
+        sp_imag_parts.append(area_imag_parts)
+
+
+    flight_phase_category = problem.get_val("data:reference_flight_condition:flight_phase_category")
+    q = problem.get_val("data:reference_flight_condition:dynamic_pressure")
+    CL_alpha = problem.get_val("data:handling_qualities:longitudinal:derivatives:CL:alpha")
+    S = problem.get_val("data:geometry:wing:area")
+    W = problem.get_val("data:reference_flight_condition:weight")
+    n_alpha = q * CL_alpha * S / W
+
+    z_sp_reqs, wn_sp_reqs = CheckShortPeriod.get_short_period_requirements(flight_phase_category, n_alpha)
+    z_sp_min_req_1 = z_sp_reqs[0]
+    z_sp_max_req_1 = z_sp_reqs[1]
+    wn_sp_min_req_1 = wn_sp_reqs[0]
+    wn_sp_max_req_1 = wn_sp_reqs[1]
+
+    ### PLOT ###
+    fig, ax = plt.subplots(figsize=(11.2, 8.4))
+    title = "Short Period Eigenvalues for different HT Areas and CG positions, " \
+            + "altitude = " + str(ref_flight_condition_dict["altitude"]) + " ft. " \
+            + "q = " + str(round(float(q), 3)) + " Pa. "
+
+    ax.set_title(title)
+    # ax.set_title("Short Period Eigenvalues for different HT Areas for $X_{CG} = %s $" % float(cg_x))
+    ax.set_xlabel(r"$n$")
+    ax.set_ylabel(r"$jw$")
+    ax.grid(visible=True, which="both")
+    # x-axis
+    ax.plot(np.linspace(-10, 10, 1000), 0.0 * np.linspace(-10, 10, 1000), color="black")
+    # y-axis
+    ax.plot(0.0 * np.linspace(-10, 10, 1000), np.linspace(-10, 10, 1000), color="black")
+
+    markers = [".", "+", "x", "*", "d"]
+    # colors = ["b", "g", "r", "c", "m", "y", "k", "orange"]
+    colors = cm.rainbow(np.linspace(0, 1, len(ht_areas)))
+    for i in range(len(cg_x_positions)):
+        for j in range(len(ht_areas)):
+
+            if j == 0:
+                label = r"$S_{HTP} = $" + str(round(ht_areas[j], 3)) + " " + r"$x_{CG} = $" + str(round(float(cg_x_positions[i]), 3))
+            else:
+                label = r"$S_{HTP} = $" + str(round(ht_areas[j], 3))
+
+            marker = markers[i]
+            color = colors[j]
+            ax.scatter(sp_real_parts[i][j], sp_imag_parts[i][j], label=label, marker=marker, color=color)
+
+    # Damping ratio limits
+    # Level 1
+    x_damp_min_1, y_damp_min_1 = get_damping_limits(z_sp_min_req_1)
+    ax.plot(x_damp_min_1, y_damp_min_1, linestyle="dashdot", color="red", label="Level 1")
+    x_damp_max_1, y_damp_max_1 = get_damping_limits(z_sp_max_req_1)
+    ax.plot(x_damp_max_1, y_damp_max_1, linestyle="dashdot", color="red", label="")
+
+    # Frequency limits
+    # Level 1
+    x_freq_min_1, y_freq_min_1 = get_frequency_limits(wn_sp_min_req_1)
+    ax.plot(x_freq_min_1, y_freq_min_1, linestyle="--", color="red", label="")
+    x_freq_max_1, y_freq_max_1 = get_frequency_limits(wn_sp_max_req_1)
+    ax.plot(x_freq_max_1, y_freq_max_1, linestyle="--", color="red", label="")
+
+    ax.legend(loc="upper right")
+    min_real_parts = min(min(sp_real_parts))
+    max_real_parts = max(max(sp_real_parts))
+    max_imag_parts = max(max(sp_imag_parts))
+    ax.set_xbound(min_real_parts * 1.25, 1.0)
+    ax.set_ybound(-1.5, max_imag_parts * 1.5)
+    plt.show()
+
+    results_dir = results_folder.name
+    plot_name = "sp_eigenvalues_variation.png"
+    fig_dir = os.path.join(results_dir, plot_name)
+
+    fig.savefig(fig_dir)
+
+    # Copy temporary folder into Stage DCAS / Results
+    original = results_folder.name
+    target = "C:/Users/hugog/OneDrive - Universidad Politécnica de Madrid/GoodNotes 5/Máster Ingeniería Aeroespacial (MUIA)/2º MUIA (SUPAERO)/2º Sem/Stage DCAS/RESULTS/Short Period Tail Sizing"
+    if XML_FILE == "beechcraft_76.xml":
+        target = "C:/Users/hugog/OneDrive - Universidad Politécnica de Madrid/GoodNotes 5/Máster Ingeniería Aeroespacial (MUIA)/2º MUIA (SUPAERO)/2º Sem/Stage DCAS/RESULTS/Beechcraft 76/Short Period Tail Sizing"
+    elif XML_FILE == "cirrus_sr22.xml":
+        target = "C:/Users/hugog/OneDrive - Universidad Politécnica de Madrid/GoodNotes 5/Máster Ingeniería Aeroespacial (MUIA)/2º MUIA (SUPAERO)/2º Sem/Stage DCAS/RESULTS/Cirrus SR22/Short Period Tail Sizing"
+    elif XML_FILE == "cessna_182.xml":
+        target = "C:/Users/hugog/OneDrive - Universidad Politécnica de Madrid/GoodNotes 5/Máster Ingeniería Aeroespacial (MUIA)/2º MUIA (SUPAERO)/2º Sem/Stage DCAS/RESULTS/Cessna 182/Short Period Tail Sizing"
+
+    shutil.move(original, target)
+
+    # Remove existing result files
+    results_folder.cleanup()
+
+
+
+def dutch_roll_tail_sizing(add_fuselage, use_openvsp, XML_FILE, XML_OPTIM_FILE):
+    def get_damping_limits(damping_ratio):
+        if damping_ratio == 0.0:
+            x = np.linspace(-100, 0.0, 100) * 0.0
+            y = np.linspace(-100, 0.0, 100)
+        elif damping_ratio == 1.0 or damping_ratio > 1.0:
+            x = np.linspace(-100, 0.0, 100)
+            y = np.linspace(-100, 0.0, 100) * 0.0
+        else:
+            phi = math.asin(damping_ratio)
+            phi = math.pi / 2 - phi
+            x = np.linspace(-100, 0.0, 100)
+            y = math.tan(-phi) * x
+
+        return x, y
+
+    def get_vertical_limits(z_wn_product):
+        x = -z_wn_product * np.ones(1000)
+        y = np.linspace(-100, 100, 1000)
+
+        return x, y
+
+    def get_frequency_limits(wn):
+        angle = np.linspace(math.pi, math.pi / 2.0, 100)
+
+        x = wn * np.cos(angle)
+        y = wn * np.sin(angle)
+
+        return x, y
+
+    # Create result temporary directory
+    results_folder = _create_tmp_directory()
+
+    # First we give default reference flight conditions
+    ref_flight_condition_dict = {}
+
+    ivc = get_indep_var_comp(
+        list_inputs(AircraftModesComputation(
+            airplane_file=XML_FILE,
+            reference_flight_condition=ref_flight_condition_dict,
+            result_folder_path=results_folder.name,
+            add_fuselage=add_fuselage,
+            use_openvsp=use_openvsp
+        )), __file__, XML_FILE
+    )
+
+    problem = run_system(
+        AircraftModesComputation(
+            airplane_file=XML_FILE,
+            reference_flight_condition=ref_flight_condition_dict,
+            result_folder_path=results_folder.name,
+            add_fuselage=add_fuselage,
+            use_openvsp=use_openvsp
+        ), ivc
+    )
+
+    cg_aft = problem.get_val("data:weight:aircraft:CG:aft:x")
+    cg_fwd = problem.get_val("data:weight:aircraft:CG:fwd:x")
+    MTOW = problem.get_val("data:weight:aircraft:MTOW")
+    cg_x = (cg_aft + cg_fwd) / 2.0
+
+    dihedral_angles = np.linspace(0.0, 10.0, 5)
+    vt_areas = np.linspace(1.0, 3.0, 6)
+
+    sp_real_parts = []
+    sp_imag_parts = []
+
+    for dihedral in dihedral_angles:
+
+        ref_flight_condition_dict = {
+            "mach": 0.201,
+            "altitude": 5000.0,
+            "theta": 0.0,
+            "weight": MTOW * 0.9,
+            "cg_x": cg_x,
+        }
+
+        area_real_parts = []
+        area_imag_parts = []
+
+        for vt_area in vt_areas:
+            ivc = get_indep_var_comp(
+                list_inputs(AircraftModesComputation(
+                    airplane_file=XML_OPTIM_FILE,
+                    result_folder_path=results_folder.name,
+                    reference_flight_condition=ref_flight_condition_dict,
+                    add_fuselage=add_fuselage,
+                    use_openvsp=use_openvsp
+                )), __file__, XML_OPTIM_FILE
+            )
+            ivc.add_output("data:geometry:vertical_tail:area", val=vt_area, units="m**2")
+            ivc.add_output("data:geometry:wing:dihedral", val=dihedral, units="deg")
+
+            problem = run_system(
+                AircraftModesComputation(
+                    airplane_file=XML_OPTIM_FILE,
+                    result_folder_path=results_folder.name,
+                    reference_flight_condition=ref_flight_condition_dict,
+                    add_fuselage=add_fuselage,
+                    use_openvsp=use_openvsp
+                ), ivc
+            )
+
+            real_sp = problem.get_val("data:handling_qualities:longitudinal:modes:short_period:real_part")
+            imag_sp = problem.get_val("data:handling_qualities:longitudinal:modes:short_period:imag_part")
+
+            area_real_parts.append(real_sp)
+            area_imag_parts.append(imag_sp)
+
+        sp_real_parts.append(area_real_parts)
+        sp_imag_parts.append(area_imag_parts)
+
+    flight_phase_category = problem.get_val("data:reference_flight_condition:flight_phase_category")
+    # aircraft_class = problem.get_val("data:geometry:aircraft:class")
+    aircraft_class = 1.0
+    q = problem.get_val("data:reference_flight_condition:dynamic_pressure")
+
+
+    level_1_dr_reqs, level_2_dr_reqs, level_3_dr_reqs = CheckDutchRoll.get_dutch_roll_requirements(
+        aircraft_class, flight_phase_category)
+    min_z_dr_1 = level_1_dr_reqs[0]
+    min_z_wn_dr_1 = level_1_dr_reqs[1]
+    min_wn_dr_1 = level_1_dr_reqs[2]
+
+    ### PLOT ###
+    # fig, ax = plt.subplots(figsize=(11.2, 8.4))
+    fig, ax = plt.subplots()
+    title = "Dutch Roll Eigenvalues for different VT Areas and Dihedral Angles, " \
+            + "altitude = " + str(ref_flight_condition_dict["altitude"]) + " ft. " \
+            + "q = " + str(round(float(q), 3)) + " Pa. "
+
+    ax.set_title(title)
+    ax.set_xlabel(r"$n$")
+    ax.set_ylabel(r"$jw$")
+    ax.grid(visible=True, which="both")
+    # x-axis
+    ax.plot(np.linspace(-10, 10, 1000), 0.0 * np.linspace(-10, 10, 1000), color="black")
+    # y-axis
+    ax.plot(0.0 * np.linspace(-10, 10, 1000), np.linspace(-10, 10, 1000), color="black")
+
+    markers = [".", "+", "x", "*", "d"]
+    colors = ["b", "g", "r", "c", "m", "y", "k", "orange"]
+    for i in range(len(dihedral_angles)):
+        for j in range(len(vt_areas)):
+
+            if j == 0:
+                label = r"$S_{VTP} = $" + str(vt_areas[j]) + " " + r"$\Gamma = $" + str(
+                    round(float(dihedral_angles[i]), 3))
+            else:
+                label = r"$S_{VTP} = $" + str(vt_areas[j])
+
+            marker = markers[i]
+            color = colors[j]
+            ax.scatter(sp_real_parts[i][j], sp_imag_parts[i][j], label=label, marker=marker, color=color)
+
+    # Limits
+    # Damping ratio limits
+    x_1, y_1 = get_damping_limits(min_z_dr_1)
+    ax.plot(x_1, y_1, linestyle="dashdot", color="red")
+
+    # Frequency limits
+
+    x_1, y_1 = get_frequency_limits(min_wn_dr_1)
+    ax.plot(x_1, y_1, linestyle="--", color="red")
+
+    # Damping-frequency product limit
+    x_1, y_1 = get_vertical_limits(min_z_wn_dr_1)
+    ax.plot(x_1, y_1, linestyle="--", color="red")
+
+    ax.legend(loc="upper right")
+    min_real_parts = min(min(sp_real_parts))
+    max_real_parts = max(max(sp_real_parts))
+    max_imag_parts = max(max(sp_imag_parts))
+    ax.set_xbound(min_real_parts * 1.25, max(abs(max_real_parts), 1.0) * 1.5)
+    ax.set_ybound(-0.1, max_imag_parts * 1.5)
+    plt.show()
+
+    results_dir = results_folder.name
+    plot_name = "dr_eigenvalues_variation.png"
+    fig_dir = os.path.join(results_dir, plot_name)
+
+    fig.savefig(fig_dir)
+
+    # Copy temporary folder into Stage DCAS / Results
+    original = results_folder.name
+    target = "C:/Users/hugog/OneDrive - Universidad Politécnica de Madrid/GoodNotes 5/Máster Ingeniería Aeroespacial (MUIA)/2º MUIA (SUPAERO)/2º Sem/Stage DCAS/RESULTS/Dutch Roll Tail Sizing"
+    if XML_FILE == "beechcraft_76.xml":
+        target = "C:/Users/hugog/OneDrive - Universidad Politécnica de Madrid/GoodNotes 5/Máster Ingeniería Aeroespacial (MUIA)/2º MUIA (SUPAERO)/2º Sem/Stage DCAS/RESULTS/Beechcraft 76/Dutch Roll Tail Sizing"
+    elif XML_FILE == "cirrus_sr22.xml":
+        target = "C:/Users/hugog/OneDrive - Universidad Politécnica de Madrid/GoodNotes 5/Máster Ingeniería Aeroespacial (MUIA)/2º MUIA (SUPAERO)/2º Sem/Stage DCAS/RESULTS/Cirrus SR22/Dutch Roll Tail Sizing"
+    elif XML_FILE == "cessna_182.xml":
+        target = "C:/Users/hugog/OneDrive - Universidad Politécnica de Madrid/GoodNotes 5/Máster Ingeniería Aeroespacial (MUIA)/2º MUIA (SUPAERO)/2º Sem/Stage DCAS/RESULTS/Cessna 182/Dutch Roll Tail Sizing"
+
+    shutil.move(original, target)
+
+    # Remove existing result files
+    results_folder.cleanup()
+
+
 

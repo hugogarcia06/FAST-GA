@@ -93,6 +93,10 @@ void main()
     SetParmVal( GetParm(hid, "SectTess_U", "XSec_1"), 25);
     Update();
 
+    //===== Define HTP Total Area ====//
+    SetParmVal( GetParm(hid, "TotalArea", "WingGeom"), htp_area );
+    Update();
+
     //==== Change Airfoils 0 shape  ====//
     ChangeXSecShape( xsec_surf, 0, XS_FILE_AIRFOIL );
     xsec = GetXSec( xsec_surf, 0 );
@@ -133,6 +137,10 @@ void main()
     SetParmVal( GetParm(vid, "Sweep", "XSec_1"), sweep_25_vtp );
     SetParmVal( GetParm(vid, "Sweep_Location", "XSec_1"), 0.25);
     SetParmVal( GetParm(vid, "SectTess_U", "XSec_1"), 25);
+    Update();
+
+    //===== Define VTP Total Area ====//
+    SetParmVal( GetParm(vid, "TotalArea", "WingGeom"), vtp_area );
     Update();
 
     //==== Change Airfoils 0 shape  ====//

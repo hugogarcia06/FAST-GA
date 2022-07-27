@@ -21,17 +21,22 @@ class CheckLongitudinal(Group):
 
     def initialize(self):
         """Definition of the options of the group"""
+        self.options.declare("result_folder_path", default="", types=str)
 
     def setup(self):
         self.add_subsystem(
             "check_phugoid",
-            CheckPhugoid(),
+            CheckPhugoid(
+                result_folder_path=self.options["result_folder_path"]
+            ),
             promotes=["*"],
         )
 
         self.add_subsystem(
             "check_short_period",
-            CheckShortPeriod(),
+            CheckShortPeriod(
+                result_folder_path=self.options["result_folder_path"]
+            ),
             promotes=["*"],
         )
 

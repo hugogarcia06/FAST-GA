@@ -130,7 +130,7 @@
           <max_deflection units="deg" is_input="True">30.0<!--rudder maximum deflection--></max_deflection>
         </rudder>
         <tip>
-          <chord units="m" is_input="False">2.14375<!--chord length at tip of vertical tail--></chord>
+          <chord units="m" is_input="False">0.9302527284655899<!--chord length at tip of vertical tail--></chord>
         </tip>
       </vertical_tail>
       <wing>
@@ -563,10 +563,10 @@
         <max_payload units="kg" is_input="False">450.0<!--max payload weight--></max_payload>
         <payload units="kg" is_input="False">390.0<!--design payload weight--></payload>
         <inertia>
-          <Iox units="kg*m**2" is_input="False"> 12.038<!--moment of inertia around aircraft x-axis--></Iox>
-          <Ioy units="kg*m**2" is_input="False">3.832<!--moment of inertia around aircraft y-axis--></Ioy>
-          <Ioz units="kg*m**2" is_input="False">15.454<!--moment of inertia around aircraft z-axis--></Ioz>
-          <Ioxz units="kg*m**2" is_input="False">0.544<!--product of inertia--></Ioxz>
+          <Iox units="kg*m**2" is_input="False">8310.375<!--moment of inertia around aircraft x-axis--></Iox>
+          <Ioy units="kg*m**2" is_input="False">1813.80209<!--moment of inertia around aircraft y-axis--></Ioy>
+          <Ioz units="kg*m**2" is_input="False">10290.68.69<!--moment of inertia around aircraft z-axis--></Ioz>
+          <Ioxz units="kg*m**2" is_input="False">0.0<!--product of inertia--></Ioxz>
         </inertia>
         <CG>
           <aft>

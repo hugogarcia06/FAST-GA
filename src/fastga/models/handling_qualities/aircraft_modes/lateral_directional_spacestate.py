@@ -30,14 +30,13 @@ class LateralDirectionalSpaceStateMatrix(ExplicitComponent):
         self.add_input("data:reference_flight_condition:air_density", val=np.nan, units="slug/ft**3")
         self.add_input("data:reference_flight_condition:theta", val=np.nan, units="deg")
         self.add_input("data:reference_flight_condition:weight", val=np.nan, units="slug")
+        self.add_input("data:reference_flight_condition:Ixx", val=np.nan, units="slug*ft**2")
+        self.add_input("data:reference_flight_condition:Izz", val=np.nan, units="slug*ft**2")
+        self.add_input("data:reference_flight_condition:Ixz", val=np.nan, units="slug*ft**2")
         self.add_input("data:reference_flight_condition:speed", val=np.nan, units="ft/s")
 
         self.add_input("data:geometry:wing:area", val=np.nan, units="ft**2")
         self.add_input("data:geometry:wing:span", val=np.nan, units="ft")
-
-        self.add_input("data:weight:aircraft:inertia:Iox", val=np.nan, units="slug*ft**2")
-        self.add_input("data:weight:aircraft:inertia:Ioz", val=np.nan, units="slug*ft**2")
-        self.add_input("data:weight:aircraft:inertia:Ioxz", val=np.nan, units="slug*ft**2")
 
         self.add_input("data:handling_qualities:lateral:derivatives:CY:beta", val=np.nan, units="rad**-1")
         self.add_input("data:handling_qualities:lateral:derivatives:CY:rollrate", val=np.nan, units="rad**-1")
@@ -84,11 +83,11 @@ class LateralDirectionalSpaceStateMatrix(ExplicitComponent):
         # mu = 2 * mass / (ro * S * b / 2)
 
         # TODO: moments and products of inertia computation
-        Ix = inputs["data:weight:aircraft:inertia:Iox"]
+        Ix = inputs["data:reference_flight_condition:Ixx"]
         # Ix = Ix / (ro * S * (b / 2)**3)
-        Iz = inputs["data:weight:aircraft:inertia:Ioz"]
+        Iz = inputs["data:reference_flight_condition:Izz"]
         # Iz = Iz / (ro * S * (b / 2)**3)
-        Jxz = inputs["data:weight:aircraft:inertia:Ioxz"]
+        Jxz = inputs["data:reference_flight_condition:Ixz"]
         # Jxz = Jxz / (ro * S * (b / 2)**3)
         i_x = Jxz / Ix
         i_z = Jxz / Iz

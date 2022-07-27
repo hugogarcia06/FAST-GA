@@ -11,16 +11,22 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import math
+import os
 import openmdao.api as om
 import numpy as np
 import matplotlib.pyplot as plt
+from importlib.resources import path
+from ... import resources as local_resources
+
+from openmdao.utils.file_wrap import InputFileGenerator
 
 
 class CheckRollMode(om.ExplicitComponent):
     """
     # TODOC:
     """
+    def initialize(self):
+        self.options.declare("result_folder_path", default="", types=str)
 
     def setup(self):
         self.add_input("data:geometry:aircraft:class", val=np.nan)
@@ -34,6 +40,8 @@ class CheckRollMode(om.ExplicitComponent):
             "data:handling_qualities:lateral:modes:roll:check:time_constant:satisfaction_level")
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
+
+        results_folder_path = self.options["result_folder_path"]
 
         aircraft_class = inputs["data:geometry:aircraft:class"]
         flight_phase_category = inputs["data:reference_flight_condition:flight_phase_category"]
@@ -50,7 +58,10 @@ class CheckRollMode(om.ExplicitComponent):
         check_time_constant = self.check_roll_mode_requirements(time_constant_roll, tc_roll_req)
 
         # PLOT S-PLANE
-        self.plot_s_plane(real_roll, imag_roll, tc_roll_req)
+        self.plot_s_plane(real_roll, imag_roll, tc_roll_req, results_folder_path)
+
+        # WRITE RESULTS
+        self.write_results(real_roll, imag_roll, time_constant_roll, check_time_constant, results_folder_path)
 
         outputs["data:handling_qualities:lateral:modes:roll:check:time_constant:satisfaction_level"] = check_time_constant
 
@@ -113,7 +124,7 @@ class CheckRollMode(om.ExplicitComponent):
 
 
     @staticmethod
-    def plot_s_plane(real_roll, imag_roll, tc_roll_req):
+    def plot_s_plane(real_roll, imag_roll, tc_roll_req, results_folder_path):
 
         def get_vertical_limits(time_constant):
 
@@ -127,6 +138,7 @@ class CheckRollMode(om.ExplicitComponent):
         tc_roll_req_2 = tc_roll_req[1]
         tc_roll_req_3 = tc_roll_req[2]
 
+        # fig, ax = plt.subplots(figsize=(11.2, 8.4))
         fig, ax = plt.subplots()
         ax.set_title("Check of Roll Mode Characteristics Versus Flying Quality Requirements")
         ax.set_xlabel(r"$n$")
@@ -150,6 +162,43 @@ class CheckRollMode(om.ExplicitComponent):
         ax.legend(loc="upper right")
         ax.set_xbound(real_roll * 3, 0.1)
         ax.set_ybound(-real_roll * 3, real_roll * 3)
-        plt.show()
+        ax.set_xbound(-11.0, 2.0)
+        ax.set_ybound(-5.0, 5.0)
+        # plt.show()
+
+        results_dir = results_folder_path
+        plots_dir = os.path.join(results_dir, 'Check Modes Plots/')
+        plot_name = "roll_mode_s-plane.png"
+
+        if not os.path.isdir(plots_dir):
+            os.makedirs(plots_dir)
+
+        fig.savefig(plots_dir + plot_name)
+
+
+    @staticmethod
+    def write_results(real_part, imag_part, time_constant, check_time_constant, results_folder_path):
+
+        file_name = "check_modes_results_roll.txt"
+        resources_directory = "C:/Users/hugog/OneDrive/Escritorio/FAST-GA/src/fastga/models/handling_qualities/resources"
+        saving_directory = os.path.join(resources_directory, file_name)
+
+        parser = InputFileGenerator()
+        with path(local_resources, "check_modes_results_dr.txt") as input_template_path:
+            parser.set_template_file(str(input_template_path))
+            parser.set_generated_file(saving_directory)
+            parser.mark_anchor("roll_real_part")
+            parser.transfer_var(round(float(real_part), 5), 0, 3)
+            parser.mark_anchor("roll_imag_part")
+            parser.transfer_var(round(float(imag_part), 5), 0, 3)
+            parser.mark_anchor("roll_time_constant")
+            parser.transfer_var(round(float(time_constant), 5), 0, 3)
+            parser.mark_anchor("roll_time_constant_level")
+            parser.transfer_var(round(float(check_time_constant), 5), 0, 3)
+            parser.generate()
+
+        os.remove(
+            os.path.join(resources_directory, "check_modes_results_dr.txt")
+        )
 
 

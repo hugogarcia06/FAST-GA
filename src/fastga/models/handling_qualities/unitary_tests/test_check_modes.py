@@ -190,18 +190,4 @@ def test_check_lateral_modes():
     )) == pytest.approx(1.0, abs=0.001)
 
 
-def test_check_modes_complete():
-    """
-    For testing the complete modes analysis, from calculating the stability derivatives, the aircraft's modes and
-    checking them according to hte regulations.
-    """
 
-    use_openvsp = True
-    add_fuselage = False
-    XML_FILE = "beechcraft_76.xml"
-
-    check_aircraft_modes(
-        use_openvsp,
-        add_fuselage,
-        XML_FILE
-    )

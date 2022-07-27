@@ -28,7 +28,9 @@ class StabilityDerivatives(Group):
 
     def initialize(self):
         """Definition of the options of the group"""
+        self.options.declare("airplane_file", default="", types=str)
         self.options.declare("use_openvsp", default=True, types=bool)
+        self.options.declare("reference_flight_condition", default={}, types=dict)
         self.options.declare("openvsp_exe_path", default="", types=str, allow_none=True)
         self.options.declare("result_folder_path", default="", types=str, allow_none=True)
         self.options.declare("wing_airfoil", default="naca23012.af", types=str, allow_none=True)
@@ -41,10 +43,16 @@ class StabilityDerivatives(Group):
         """
         Add the method to compute the stability derivatives
         """
-        # Set Flight Reference Condition
+        # Set Flight Reference Condition.
         self.add_subsystem(
             "reference_flight_condition",
-            ReferenceFlightCondition(),
+            ReferenceFlightCondition(
+                airplane_file=self.options["airplane_file"],
+                reference_flight_condition=self.options["reference_flight_condition"],
+                use_openvsp=self.options["use_openvsp"],
+                result_folder_path=self.options["result_folder_path"],
+                add_fuselage=self.options["add_fuselage"]
+            ),
             promotes=["*"],
         )
         # Compute missing geometry

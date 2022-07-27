@@ -17,37 +17,43 @@ import pytest
 import math
 
 # Classes to be tested
-from fastga.models.handling_qualities.longitudinal_dynamics.components.horizontal_tail.cL_alpha_ht import CLAlphaHT
-from fastga.models.handling_qualities.longitudinal_dynamics.components.wing.cL_alpha_wingbody import CLAlphaWingBody
-from fastga.models.handling_qualities.lateral_directional_dynamics.components.fuselage.cY_beta_body import CYBetaBody
-from fastga.models.handling_qualities.lateral_directional_dynamics.components.fuselage.cn_beta_body import CnBetaBody
-from fastga.models.handling_qualities.lateral_directional_dynamics.components.vertical_tail.cY_beta_vt import CYBetaVT
-from fastga.models.handling_qualities.lateral_directional_dynamics.components.vertical_tail.cl_beta_vt import ClBetaVT
-from fastga.models.handling_qualities.lateral_directional_dynamics.components.vertical_tail.cn_beta_vt import CnBetaVT
-from fastga.models.handling_qualities.lateral_directional_dynamics.components.wing.cY_beta_wing import CYBetaWing
-from fastga.models.handling_qualities.lateral_directional_dynamics.components.wing.cl_beta_wingbody import ClBetaWingBody
-from fastga.models.handling_qualities.lateral_directional_dynamics.components.wing.cn_beta_wing import CnBetaWing
+from fastga.models.handling_qualities.stability_derivatives.lateral_directional.components.fuselage.cY_beta_body import \
+    CYBetaBody
+from fastga.models.handling_qualities.stability_derivatives.lateral_directional.components.horizontal_tail.cl_rollrate_ht import \
+    ClRollRateHT
+from fastga.models.handling_qualities.stability_derivatives.lateral_directional.components.vertical_tail.cY_yawrate_vt import \
+    CYYawRateVT
+from fastga.models.handling_qualities.stability_derivatives.lateral_directional.components.vertical_tail.cn_beta_vt import \
+    CnBetaVT
+from fastga.models.handling_qualities.stability_derivatives.lateral_directional.components.vertical_tail.cn_rollrate_vt import \
+    CnRollRateVT
+from fastga.models.handling_qualities.stability_derivatives.longitudinal.components.horizontal_tail.cL_alpha_ht import CLAlphaHT
+from fastga.models.handling_qualities.stability_derivatives.lateral_directional.components.vertical_tail.cY_beta_vt import CYBetaVT
+from fastga.models.handling_qualities.stability_derivatives.lateral_directional.components.vertical_tail.cl_beta_vt import ClBetaVT
+from fastga.models.handling_qualities.stability_derivatives.lateral_directional.components.wing.cY_beta_wing import CYBetaWing
+from fastga.models.handling_qualities.stability_derivatives.lateral_directional.components.wing.cl_beta_wingbody import ClBetaWingBody
 from fastga.models.aerodynamics.components.compute_cnbeta_fuselage import ComputeCnBetaFuselage
-from fastga.models.handling_qualities.longitudinal_dynamics.components.horizontal_tail.cL_pitchrate_ht import \
+from fastga.models.handling_qualities.stability_derivatives.longitudinal.components.horizontal_tail.cL_pitchrate_ht import \
     CLPitchRateHT
-from fastga.models.handling_qualities.longitudinal_dynamics.components.horizontal_tail.cm_pitchrate_ht import \
+from fastga.models.handling_qualities.stability_derivatives.longitudinal.components.horizontal_tail.cm_pitchrate_ht import \
     CmPitchRateHT
-from fastga.models.handling_qualities.longitudinal_dynamics.components.wing.cL_pitchrate_wing import CLPitchRateWing
-from fastga.models.handling_qualities.longitudinal_dynamics.components.wing.cm_pitchrate_wing import CmPitchRateWing
-from fastga.models.handling_qualities.lateral_directional_dynamics.components.vertical_tail.cY_rollrate_vt import CYRollRateVT
-from fastga.models.handling_qualities.lateral_directional_dynamics.components.vertical_tail.cl_rollrate_vt import ClRollRateVT
-from fastga.models.handling_qualities.lateral_directional_dynamics.components.horizontal_tail.cl_rollrate_ht import ClRollRateHT
-from fastga.models.handling_qualities.lateral_directional_dynamics.components.vertical_tail.cn_rollrate_vt import CnRollRateVT
-from fastga.models.handling_qualities.lateral_directional_dynamics.components.wing.cY_rollrate_wing import CYRollRateWing
-from fastga.models.handling_qualities.lateral_directional_dynamics.components.wing.cl_rollrate_wing import ClRollRateWing
-from fastga.models.handling_qualities.lateral_directional_dynamics.components.wing.cn_rollrate_wing import CnRollRateWing
-from fastga.models.handling_qualities.lateral_directional_dynamics.components.vertical_tail.cY_yawrate_vt import CYYawRateVT
-from fastga.models.handling_qualities.lateral_directional_dynamics.components.vertical_tail.cl_yawrate_vt import ClYawRateVT
-from fastga.models.handling_qualities.lateral_directional_dynamics.components.vertical_tail.cn_yawrate_vt import CnYawRateVT
-from fastga.models.handling_qualities.lateral_directional_dynamics.components.wing.cl_yawrate_wing import ClYawRateWing
-from fastga.models.handling_qualities.lateral_directional_dynamics.components.wing.cn_yawrate_wing import CnYawRateWing
+from fastga.models.handling_qualities.stability_derivatives.longitudinal.components.wing.cL_alpha_wingbody import \
+    CLAlphaWingBody
+from fastga.models.handling_qualities.stability_derivatives.longitudinal.components.wing.cL_pitchrate_wing import \
+    CLPitchRateWing
+from fastga.models.handling_qualities.stability_derivatives.longitudinal.components.wing.cm_pitchrate_wing import CmPitchRateWing
+from fastga.models.handling_qualities.stability_derivatives.lateral_directional.components.vertical_tail.cY_rollrate_vt import CYRollRateVT
+from fastga.models.handling_qualities.stability_derivatives.lateral_directional.components.vertical_tail.cl_rollrate_vt import ClRollRateVT
+from fastga.models.handling_qualities.stability_derivatives.lateral_directional.components.wing.cY_rollrate_wing import CYRollRateWing
+from fastga.models.handling_qualities.stability_derivatives.lateral_directional.components.wing.cl_rollrate_wing import ClRollRateWing
+from fastga.models.handling_qualities.stability_derivatives.lateral_directional.components.wing.cn_rollrate_wing import CnRollRateWing
+from fastga.models.handling_qualities.stability_derivatives.lateral_directional.components.vertical_tail.cl_yawrate_vt import ClYawRateVT
+from fastga.models.handling_qualities.stability_derivatives.lateral_directional.components.vertical_tail.cn_yawrate_vt import CnYawRateVT
+from fastga.models.handling_qualities.stability_derivatives.lateral_directional.components.wing.cl_yawrate_wing import ClYawRateWing
+from fastga.models.handling_qualities.stability_derivatives.lateral_directional.components.wing.cn_yawrate_wing import CnYawRateWing
+from fastga.models.handling_qualities.utils.figure_digitization import FigureDigitization2
 
-from tests.testing_utilities import run_system, get_indep_var_comp, list_inputs
+from tests.testing_utilities import run_system
 
 
 def test_CL_alpha_wing():
@@ -851,5 +857,15 @@ def test_Cn_yawrate_wing_two():
     problem = run_system(CnYawRateWing(), ivc)
     Cn_r_W = problem.get_val("data:handling_qualities:lateral:derivatives:wing:Cn:yawrate", units="rad**-1")
     assert Cn_r_W == pytest.approx(0.1452, abs=0.01)
+
+
+def test_fig_10_41():
+
+    aspect_ratio = 10.0
+    taper_ratio = 0.6
+    sweep_25 = 0.0
+    Clr_CL_mach0 = FigureDigitization2.get_Clr_CL_mach0(aspect_ratio, taper_ratio, sweep_25)
+
+    return
 
 

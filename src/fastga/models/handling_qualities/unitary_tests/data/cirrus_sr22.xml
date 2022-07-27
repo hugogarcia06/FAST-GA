@@ -12,7 +12,7 @@
       <flap_type is_input="True">1.0<!--flap type (0.0 - plain flap, 2.0 - single slotted flap, 3.0 - split flap)--></flap_type>
       <has_T_tail is_input="True">0.0<!--0=horizontal tail is attached to fuselage / 1=horizontal tail is attached to top of vertical tail--></has_T_tail>
       <aircraft>
-        <class is_input="False">1.0<!--aircraft class according to handling qualities regulation--></class>
+        <class is_input="True">1.0<!--aircraft class according to handling qualities regulation--></class>
         <wet_area units="m**2" is_input="False">59.300124140468796<!--aircraft total wet area--></wet_area>
       </aircraft>
       <cabin>
@@ -567,10 +567,10 @@
         <max_payload units="kg" is_input="False">420.0<!--max payload weight--></max_payload>
         <payload units="kg" is_input="False">355.0<!--design payload weight--></payload>
         <inertia>
-          <Iox units="kg*m**2" is_input="False">390.0<!--design payload weight--></Iox>
-          <Ioy units="kg*m**2" is_input="False">390.0<!--design payload weight--></Ioy>
-          <Ioz units="kg*m**2" is_input="False">390.0<!--design payload weight--></Ioz>
-          <Ioxz units="kg*m**2" is_input="False">390.0<!--design payload weight--></Ioxz>
+          <Iox units="kg*m**2" is_input="False">1527.46<!--moment of inertia around aircraft x-axis--></Iox>
+          <Ioy units="kg*m**2" is_input="False">2168.73894<!--moment of inertia around aircraft y-axis--></Ioy>
+          <Ioz units="kg*m**2" is_input="False">3169.32355<!--moment of inertia around aircraft z-axis--></Ioz>
+          <Ioxz units="kg*m**2" is_input="False">0.0<!--product of inertia--></Ioxz>
         </inertia>
         <CG>
           <aft>

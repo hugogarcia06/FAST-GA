@@ -98,8 +98,7 @@ class _ComputeSTABopenvsp(OPENVSPSimpleGeometry):
 
     def compute(self, inputs, outputs):
 
-        INPUT_AOA = float(inputs["data:reference_flight_condition:alpha"])  # only one value given since calculation is done by default around 0.0!
-
+        INPUT_AOA = float(inputs["data:reference_flight_condition:alpha"])
         _LOGGER.debug("Entering aerodynamic computation")
 
         # Check AOA input is float

@@ -35,7 +35,7 @@ class StabilityDerivativesHighSpeed(Group):
 
 
     def setup(self):
-        if self.options["use_openvsp"]:
+        if self.options["use_openvsp"] is True:
             # Use of OpenSVP for stability calculation
             self.add_subsystem(
                 "stab_openvsp",
@@ -50,7 +50,7 @@ class StabilityDerivativesHighSpeed(Group):
                 promotes=["*"],
             )
 
-        else:
+        if self.options["use_openvsp"] is False:
             # Use of semi-empirical expressions from DATCOM for stability calculation
             self.add_subsystem(
                 "compute_longitudinal_derivatives",

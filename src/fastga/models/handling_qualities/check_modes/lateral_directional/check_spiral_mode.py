@@ -12,15 +12,21 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import math
+import os
 import openmdao.api as om
 import numpy as np
 import matplotlib.pyplot as plt
+from openmdao.utils.file_wrap import InputFileGenerator
+from importlib.resources import path
+from ... import resources as local_resources
 
 
 class CheckSpiralMode(om.ExplicitComponent):
     """
     # TODOC:
     """
+    def initialize(self):
+        self.options.declare("result_folder_path", default="", types=str)
 
     def setup(self):
         self.add_input("data:reference_flight_condition:flight_phase_category", val=np.nan)
@@ -33,20 +39,25 @@ class CheckSpiralMode(om.ExplicitComponent):
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
 
+        results_folder_path = self.options["result_folder_path"]
+
         flight_phase_category = inputs["data:reference_flight_condition:flight_phase_category"]
 
         real_spiral = inputs["data:handling_qualities:lateral:modes:spiral:real_part"]
         imag_spiral = inputs["data:handling_qualities:lateral:modes:spiral:imag_part"]
+        t_2 = math.log(2) / real_spiral
 
         # GET REQUIREMENTS
         t_2_req = self.get_roll_mode_requirements(flight_phase_category)
 
         # CHECK
-        check_spiral = self.check_spiral_requirements(real_spiral, t_2_req)
+        check_spiral = self.check_spiral_requirements(t_2, t_2_req)
 
         # PLOT
-        self.plot_s_plane(real_spiral, imag_spiral, t_2_req)
+        self.plot_s_plane(real_spiral, imag_spiral, t_2_req, results_folder_path)
 
+        # WRITE RESULTS
+        self.write_results(real_spiral, imag_spiral, t_2, check_spiral, results_folder_path)
         outputs["data:handling_qualities:lateral:modes:spiral:check:time_double:satisfaction_level"] = check_spiral
 
 
@@ -101,7 +112,7 @@ class CheckSpiralMode(om.ExplicitComponent):
 
 
     @staticmethod
-    def plot_s_plane(real_spiral, imag_spiral, t_2_req):
+    def plot_s_plane(real_spiral, imag_spiral, t_2_req, results_folder_path):
 
         def get_vertical_limits(t_2_req):
 
@@ -115,6 +126,7 @@ class CheckSpiralMode(om.ExplicitComponent):
         t_2_req_2 = t_2_req[1]
         t_2_req_3 = t_2_req[2]
 
+        # fig, ax = plt.subplots(figsize=(11.2, 8.4))
         fig, ax = plt.subplots()
         ax.set_title("Check of Spiral Mode Characteristics Versus Flying Quality Requirements")
         ax.set_xlabel(r"$n$")
@@ -137,7 +149,43 @@ class CheckSpiralMode(om.ExplicitComponent):
         ax.legend(loc="upper right")
         ax.set_xbound(real_spiral * 3, 0.1)
         ax.set_ybound(-real_spiral * 3, real_spiral * 3)
-        plt.show()
+        ax.set_xbound(-0.05, 0.2)
+        ax.set_ybound(-0.1, 0.1)
+        # plt.show()
+
+        results_dir = results_folder_path
+        plots_dir = os.path.join(results_dir, 'Check Modes Plots/')
+        plot_name = "spiral_mode_s-plane.png"
+
+        if not os.path.isdir(plots_dir):
+            os.makedirs(plots_dir)
+
+        fig.savefig(plots_dir + plot_name)
+
+    @staticmethod
+    def write_results(real_part, imag_part, time_to_double, check_time_to_double, results_folder_path):
+
+        file_name = "check_modes_results.txt"
+        resources_directory = "C:/Users/hugog/OneDrive/Escritorio/FAST-GA/src/fastga/models/handling_qualities/resources"
+        saving_directory = os.path.join(results_folder_path, file_name)
+
+        parser = InputFileGenerator()
+        with path(local_resources, "check_modes_results_roll.txt") as input_template_path:
+            parser.set_template_file(str(input_template_path))
+            parser.set_generated_file(saving_directory)
+            parser.mark_anchor("spiral_real_part")
+            parser.transfer_var(round(float(real_part), 5), 0, 3)
+            parser.mark_anchor("spiral_imag_part")
+            parser.transfer_var(round(float(imag_part), 5), 0, 3)
+            parser.mark_anchor("spiral_time_to_double")
+            parser.transfer_var(round(float(time_to_double), 5), 0, 3)
+            parser.mark_anchor("spiral_time_to_double_level")
+            parser.transfer_var(round(float(check_time_to_double), 5), 0, 3)
+            parser.generate()
+
+        os.remove(
+            os.path.join(resources_directory, "check_modes_results_roll.txt")
+        )
 
 
 

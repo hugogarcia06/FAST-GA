@@ -414,6 +414,7 @@ class OPENVSPSimpleGeometry(ExternalCodeComp):
         dihedral_wing = inputs["data:geometry:wing:dihedral"]
         twist_wing = inputs["data:geometry:wing:twist"]
         # Horizontal Tail Geometry
+        area_htp = inputs["data:geometry:horizontal_tail:area"]
         sweep_25_htp = inputs["data:geometry:horizontal_tail:sweep_25"]
         span_htp = inputs["data:geometry:horizontal_tail:span"]
         semispan_htp = span_htp / 2.0
@@ -427,6 +428,7 @@ class OPENVSPSimpleGeometry(ExternalCodeComp):
         dihedral_htp = inputs["data:geometry:horizontal_tail:dihedral"]
         twist_htp = inputs["data:geometry:horizontal_tail:twist"]
         # Vertical Tail Geometry
+        area_vtp = inputs["data:geometry:vertical_tail:area"]
         vtp_taper_ratio = inputs["data:geometry:vertical_tail:taper_ratio"]
         sweep_25_vtp = inputs["data:geometry:vertical_tail:sweep_25"]
         span_vtp = inputs["data:geometry:vertical_tail:span"]
@@ -571,6 +573,8 @@ class OPENVSPSimpleGeometry(ExternalCodeComp):
                 parser.transfer_var(float(dihedral_htp), 0, 5)
                 parser.mark_anchor("twist_htp")
                 parser.transfer_var(float(twist_htp), 0, 5)
+                parser.mark_anchor("htp_area")
+                parser.transfer_var(float(area_htp), 0, 5)
                 parser.mark_anchor("airfoil_3_file")
                 parser.transfer_var('"' + input_file_list[-2].replace("\\", "/") + '"', 0, 3)
                 parser.mark_anchor("airfoil_4_file")
@@ -588,6 +592,8 @@ class OPENVSPSimpleGeometry(ExternalCodeComp):
                 parser.transfer_var(float(tip_chord_vtp), 0, 5)
                 parser.mark_anchor("sweep_25_vtp")
                 parser.transfer_var(float(sweep_25_vtp), 0, 5)
+                parser.mark_anchor("vtp_area")
+                parser.transfer_var(float(area_vtp), 0, 5)
                 parser.mark_anchor("airfoil_5_file")
                 parser.transfer_var('"' + input_file_list[-1].replace("\\", "/") + '"', 0, 3)
                 parser.mark_anchor("airfoil_6_file")
@@ -655,6 +661,8 @@ class OPENVSPSimpleGeometry(ExternalCodeComp):
                 parser.transfer_var(float(dihedral_htp), 0, 5)
                 parser.mark_anchor("twist_htp")
                 parser.transfer_var(float(twist_htp), 0, 5)
+                parser.mark_anchor("htp_area")
+                parser.transfer_var(float(area_htp), 0, 5)
                 parser.mark_anchor("airfoil_3_file")
                 parser.transfer_var('"' + input_file_list[-2].replace("\\", "/") + '"', 0, 3)
                 parser.mark_anchor("airfoil_4_file")
@@ -672,6 +680,8 @@ class OPENVSPSimpleGeometry(ExternalCodeComp):
                 parser.transfer_var(float(tip_chord_vtp), 0, 5)
                 parser.mark_anchor("sweep_25_vtp")
                 parser.transfer_var(float(sweep_25_vtp), 0, 5)
+                parser.mark_anchor("vtp_area")
+                parser.transfer_var(float(area_vtp), 0, 5)
                 parser.mark_anchor("airfoil_5_file")
                 parser.transfer_var('"' + input_file_list[-1].replace("\\", "/") + '"', 0, 3)
                 parser.mark_anchor("airfoil_6_file")

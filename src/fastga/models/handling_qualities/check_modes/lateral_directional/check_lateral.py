@@ -22,22 +22,29 @@ class CheckLateral(Group):
 
     def initialize(self):
         """Definition of the options of the group"""
+        self.options.declare("result_folder_path", default="", types=str)
 
     def setup(self):
         self.add_subsystem(
             "check_dutch_roll",
-            CheckDutchRoll(),
+            CheckDutchRoll(
+                result_folder_path=self.options["result_folder_path"]
+            ),
             promotes=["*"],
         )
 
         self.add_subsystem(
             "check_roll_mode",
-            CheckRollMode(),
+            CheckRollMode(
+                result_folder_path=self.options["result_folder_path"]
+            ),
             promotes=["*"],
         )
 
         self.add_subsystem(
             "check_spiral_mode",
-            CheckSpiralMode(),
+            CheckSpiralMode(
+                result_folder_path=self.options["result_folder_path"]
+            ),
             promotes=["*"],
         )

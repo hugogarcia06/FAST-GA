@@ -15,7 +15,7 @@ import pytest
 import os.path as pth
 
 from fastga.models.handling_qualities.unitary_tests.test_functions import comp_stab_coef, stability
-from fastga.models.handling_qualities.external.openvsp.openvsp import OPENVSPSimpleGeometry
+from fastga.models.handling_qualities.stability_derivatives.external.openvsp.openvsp import OPENVSPSimpleGeometry
 from fastga.models.handling_qualities.unitary_tests import data
 
 XML_FILE = "beechcraft_76.xml"
@@ -79,13 +79,13 @@ def test_openvsp_comp_stab_coef():
 
 def test_stability():
 
-    add_fuselage = False
+    add_fuselage = True
     use_openvsp = True
 
     stability(
         add_fuselage,
         use_openvsp,
-        XML_FILE,
+        XML_FILE="beechcraft_76.xml",
     )
 
 

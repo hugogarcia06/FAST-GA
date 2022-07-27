@@ -13,14 +13,13 @@
 
 import pytest
 
-from .test_functions import alpha_derivatives
+from .test_functions import alpha_derivatives, check_aircraft_modes, aircraft_modes, short_period_tail_sizing, \
+    dutch_roll_tail_sizing
 from ..compute_static_margin import ComputeStaticMargin
-from ..stability_derivatives import StabilityDerivatives
 from ..tail_sizing.update_vt_area import UpdateVTArea
 from ..tail_sizing.update_ht_area import UpdateHTArea
 from ..tail_sizing.compute_to_rotation_limit import ComputeTORotationLimitGroup
 from ..tail_sizing.compute_balked_landing_limit import ComputeBalkedLandingLimit
-from ..longitudinal_dynamics.compute_longitudinal_derivatives import ComputeLongitudinalDerivatives
 
 from tests.testing_utilities import run_system, get_indep_var_comp, list_inputs
 
@@ -154,5 +153,60 @@ def test_alpha_derivatives():
     )
 
 
+def test_aircraft_modes():
+    """
+    Testing the module for obtaining the aircraft's modes.
+    """
+
+    add_fuselage = False
+    use_openvsp = True
+    XML_FILE = "beechcraft_76.xml"
+
+    aircraft_modes(
+        add_fuselage,
+        use_openvsp,
+        XML_FILE
+    )
+
+
+def test_check_modes_complete():
+    """
+    For testing the complete modes analysis, from calculating the stability derivatives, the aircraft's modes and
+    checking them according to hte regulations.
+    """
+
+    add_fuselage = False
+    use_openvsp = True
+    XML_FILE = "beechcraft_76.xml"
+
+    check_aircraft_modes(
+        add_fuselage,
+        use_openvsp,
+        XML_FILE
+    )
+
+
+def test_short_period_tail_sizing():
+    add_fuselage = False
+    use_openvsp = True
+
+    short_period_tail_sizing(
+        add_fuselage,
+        use_openvsp,
+        XML_FILE="beechcraft_76.xml",
+        XML_OPTIM_FILE="beechcraft_76_no_ht_area.xml"
+    )
+
+
+def test_dutch_roll_tail_sizing():
+    add_fuselage = False
+    use_openvsp = True
+
+    dutch_roll_tail_sizing(
+        add_fuselage,
+        use_openvsp,
+        XML_FILE="beechcraft_76.xml",
+        XML_OPTIM_FILE="beechcraft_76_dutch_roll.xml"
+    )
 
 

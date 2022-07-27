@@ -1747,7 +1747,7 @@ class FigureDigitization2(om.ExplicitComponent):
 
         :param aspect_ratio: wing aspect ratio
         :param taper_ratio: wing taper ratio
-        :param sweep_25: wing sweep angle at quarter-taper point line
+        :param sweep_25: wing sweep angle at quarter-taper point line in radians
         """
 
         sweep_25 = sweep_25 * 180.0 / math.pi  # radians to degrees
@@ -1803,10 +1803,10 @@ class FigureDigitization2(om.ExplicitComponent):
             _LOGGER.warning("Aspect ratio value outside of the range in Roskam's book, value clipped")
 
         k_taper = [
-            float(k_taper0(np.clip(aspect_ratio, min(x_1_0), max(x_1_0)))),
-            float(k_taper025(np.clip(aspect_ratio, min(x_0_5), max(x_0_5)))),
-            float(k_taper05(np.clip(aspect_ratio, min(x_0_25), max(x_0_25)))),
-            float(k_taper1(np.clip(aspect_ratio, min(x_0), max(x_0)))),
+            float(k_taper0(np.clip(aspect_ratio, min(x_0), max(x_0)))),
+            float(k_taper025(np.clip(aspect_ratio, min(x_0_25), max(x_0_25)))),
+            float(k_taper05(np.clip(aspect_ratio, min(x_0_5), max(x_0_5)))),
+            float(k_taper1(np.clip(aspect_ratio, min(x_1_0), max(x_1_0)))),
         ]
 
         if taper_ratio != np.clip(taper_ratio, 0.0, 1.0):
